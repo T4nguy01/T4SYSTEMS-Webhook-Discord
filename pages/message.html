@@ -161,6 +161,22 @@
                 <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                 Message Simple
               </h3>
+              <div class="toolbar">
+                <button class="btn-tool" onclick="insertMention('user')">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  Utilisateur
+                </button>
+                <button class="btn-tool" onclick="insertMention('role')">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                  Rôle
+                </button>
+                <button class="btn-tool" onclick="insertMention('channel')">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 18"></path></svg>
+                  Salon
+                </button>
+                <button class="btn-tool" onclick="insertMention('everyone')">@everyone</button>
+                <button class="btn-tool" onclick="insertMention('here')">@here</button>
+              </div>
               <textarea id="plainText" placeholder="Écrivez le message classique qui s'affichera au-dessus de l'embed... (Optionnel)" style="min-height: 100px; font-size: 15px; padding: 16px; border-color: transparent; box-shadow: 0 2px 8px rgba(0,0,0,0.04);"></textarea>
             </div>
 
@@ -170,6 +186,12 @@
                 <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
                 Contenu de l'Embed
               </h3>
+              
+              <!-- Tabs for Multi-Embed -->
+              <div class="tabs-container" id="embedTabs">
+                <div class="tab active" onclick="switchEmbed(0)">Embed 1</div>
+                <div class="tab tab-add" onclick="addEmbed()" title="Ajouter un embed">+</div>
+              </div>
               
               <div class="grid" style="gap:24px;">
                 <!-- Champs Principaux -->
@@ -190,6 +212,22 @@
                 </div>
                 <div>
                   <label>Description du message</label>
+                  <div class="toolbar">
+                    <button class="btn-tool" onclick="insertMention('user')">
+                      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                      Utilisateur
+                    </button>
+                    <button class="btn-tool" onclick="insertMention('role')">
+                      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                      Rôle
+                    </button>
+                    <button class="btn-tool" onclick="insertMention('channel')">
+                      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 18"></path></svg>
+                      Salon
+                    </button>
+                    <button class="btn-tool" onclick="insertMention('everyone')">@everyone</button>
+                    <button class="btn-tool" onclick="insertMention('here')">@here</button>
+                  </div>
                   <textarea id="embDesc" placeholder="Contenu textuel principal de l'embed... (Mise en forme Markdown valide)" style="min-height: 140px; border-color: transparent; box-shadow: 0 2px 8px rgba(0,0,0,0.04);"></textarea>
                   <div class="char-limit" id="descLimit">0 / 4096</div>
                 </div>
@@ -306,18 +344,20 @@
               <div class="pill" style="margin-bottom: 20px; background: var(--accent); color: white;">Aperçu Visuel</div>
               <div class="preview-content" id="prevContent">Aucun message texte.</div>
               
-              <div class="preview-embed" id="prevEmbed">
-                <div id="prevAuthor" style="display:none; align-items:center; gap:10px; color:var(--text-primary); font-weight:600; font-size:14px; margin-bottom: 12px;"></div>
-                <div style="display: flex; gap: 16px;">
-                  <div style="flex: 1; overflow: hidden;">
-                    <div class="prev-title" id="prevTitle"></div>
-                    <div class="prev-desc" id="prevDesc"></div>
-                    <div id="prevFields" style="margin-top:16px; display: flex; flex-wrap: wrap; gap: 16px;"></div>
-                    <img id="prevImg" class="prev-img" alt="aperçu de l'image">
+              <div id="embedsPreview">
+                <div class="preview-embed" id="prevEmbed">
+                  <div id="prevAuthor" style="display:none; align-items:center; gap:10px; color:var(--text-primary); font-weight:600; font-size:14px; margin-bottom: 12px;"></div>
+                  <div style="display: flex; gap: 16px;">
+                    <div style="flex: 1; overflow: hidden;">
+                      <div class="prev-title" id="prevTitle"></div>
+                      <div class="prev-desc" id="prevDesc"></div>
+                      <div id="prevFields" style="margin-top:16px; display: flex; flex-wrap: wrap; gap: 16px;"></div>
+                      <img id="prevImg" class="prev-img" alt="aperçu de l'image">
+                    </div>
+                    <img id="prevThumb" class="prev-img" style="margin-top: 0; max-width:80px; max-height:80px; object-fit: contain; flex-shrink: 0; border-radius: 4px;" alt="aperçu du thumbnail">
                   </div>
-                  <img id="prevThumb" class="prev-img" style="margin-top: 0; max-width:80px; max-height:80px; object-fit: contain; flex-shrink: 0; border-radius: 4px;" alt="aperçu du thumbnail">
+                  <div class="prev-footer" id="prevFooter"></div>
                 </div>
-                <div class="prev-footer" id="prevFooter"></div>
               </div>
             </div>
             
@@ -327,8 +367,6 @@
               Envoyer sur Discord
             </button>
 
-            <!-- Status Alert Container -->
-            <div id="status" class="status"></div>
 
             <!-- Paramètres de Sauvegarde de Template -->
             <div style="background: var(--panel-bg); padding: 24px; border-radius: var(--radius-xl); border: 1px solid var(--panel-border); box-shadow: var(--panel-shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
@@ -348,26 +386,190 @@
               </div>
             </div>
 
+            <!-- Message History Panel -->
+            <div style="background: var(--panel-bg); padding: 24px; border-radius: var(--radius-xl); border: 1px solid var(--panel-border); box-shadow: var(--panel-shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+              <h4 style="margin:0 0 16px 0; font-family: var(--font-head); font-size: 16px; color: var(--text-primary); display:flex; align-items:center; gap:8px;">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Historique des envois (10 derniers)
+              </h4>
+              <div id="historyList" class="history-container" style="max-height: 250px; overflow-y: auto;">
+                <div style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px;">Aucun historique pour le moment.</div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <div class="toast-container" id="toastContainer"></div>
+
   <script>
     const $ = id => document.getElementById(id);
-    const statusEl = $("status");
     const LS_KEY = "webhooks";
     const TPL_KEY = "te_templates";
+    const HIST_KEY = "te_history";
 
+    // --- State Management ---
+    let embedsData = [{ title: "", url: "", description: "", color: "#2563eb", img: "", thumb: "", author: "", authorIcon: "", footer: "", footerIcon: "", timestamp: false, fields: [] }];
+    let activeEmbedIndex = 0;
     const localFiles = {};
+    let lastFocusedTextarea = null;
+
+    document.querySelectorAll('textarea').forEach(tx => {
+      tx.onfocus = () => lastFocusedTextarea = tx;
+    });
+
+    function createEmptyEmbed() {
+      return { title: "", url: "", description: "", color: "#2563eb", img: "", thumb: "", author: "", authorIcon: "", footer: "", footerIcon: "", timestamp: false, fields: [] };
+    }
+
+    // --- Toast System ---
+    function spawnToast(msg, type="ok") {
+      const container = $("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      
+      const icon = type === "ok" 
+        ? '<svg class="toast-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>'
+        : '<svg class="toast-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+      
+      toast.innerHTML = `${icon}<span>${msg}</span>`;
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.add("fadeOut");
+        setTimeout(() => toast.remove(), 500);
+      }, 4000);
+    }
+
+    // --- Mention Helper ---
+    function insertMention(type) {
+      const activeTx = lastFocusedTextarea || $("plainText");
+      let snippet = "";
+      if (type === 'everyone') snippet = "@everyone";
+      else if (type === 'here') snippet = "@here";
+      else {
+        const id = prompt(`Entrez l'ID du ${type} (Numérique uniquement) :`);
+        if (!id) return;
+        if (type === 'user') snippet = `<@${id}>`;
+        if (type === 'role') snippet = `<@&${id}>`;
+        if (type === 'channel') snippet = `<#${id}>`;
+      }
+
+      const start = activeTx.selectionStart;
+      const end = activeTx.selectionEnd;
+      const text = activeTx.value;
+      activeTx.value = text.substring(0, start) + snippet + text.substring(end);
+      activeTx.focus();
+      activeTx.selectionStart = activeTx.selectionEnd = start + snippet.length;
+      updatePreview();
+    }
+
+    // --- Multi-Embed Logic ---
+    function updateTabs() {
+      const container = $("embedTabs");
+      container.innerHTML = "";
+      embedsData.forEach((_, i) => {
+        const tab = document.createElement("div");
+        tab.className = `tab ${i === activeEmbedIndex ? 'active' : ''}`;
+        tab.innerHTML = `Embed ${i + 1}`;
+        if (embedsData.length > 1) {
+          const del = document.createElement("span");
+          del.className = "tab-remove";
+          del.innerHTML = "&times;";
+          del.onclick = (e) => { e.stopPropagation(); removeEmbed(i); };
+          tab.appendChild(del);
+        }
+        tab.onclick = () => switchEmbed(i);
+        container.appendChild(tab);
+      });
+      if (embedsData.length < 10) {
+        const add = document.createElement("div");
+        add.className = "tab tab-add";
+        add.innerHTML = "+";
+        add.onclick = addEmbed;
+        container.appendChild(add);
+      }
+    }
+
+    function addEmbed() {
+      if (embedsData.length >= 10) return spawnToast("Maximum 10 embeds atteints.", "err");
+      saveActiveEmbedState();
+      embedsData.push(createEmptyEmbed());
+      activeEmbedIndex = embedsData.length - 1;
+      loadActiveEmbedToForm();
+      updateTabs();
+      updatePreview();
+    }
+
+    function removeEmbed(index) {
+      if (embedsData.length <= 1) return;
+      embedsData.splice(index, 1);
+      if (activeEmbedIndex >= embedsData.length) activeEmbedIndex = embedsData.length - 1;
+      loadActiveEmbedToForm();
+      updateTabs();
+      updatePreview();
+    }
+
+    function switchEmbed(index) {
+      if (index === activeEmbedIndex) return;
+      saveActiveEmbedState();
+      activeEmbedIndex = index;
+      loadActiveEmbedToForm();
+      updateTabs();
+      updatePreview();
+    }
+
+    function saveActiveEmbedState() {
+      const embeds = embedsData[activeEmbedIndex];
+      embeds.title = $("embTitle").value.trim();
+      embeds.url = $("embUrl").value.trim();
+      embeds.description = $("embDesc").value.trim();
+      embeds.color = $("embColor").value;
+      embeds.img = $("embImg").value.trim();
+      embeds.thumb = $("embThumb").value.trim();
+      embeds.author = $("embAuthor").value.trim();
+      embeds.authorIcon = $("embAuthorIcon").value.trim();
+      embeds.footer = $("embFooter").value.trim();
+      embeds.footerIcon = $("embFooterIcon").value.trim();
+      embeds.timestamp = $("embTimestamp").checked;
+      embeds.fields = collectFields();
+    }
+
+    function loadActiveEmbedToForm() {
+      const e = embedsData[activeEmbedIndex];
+      $("embTitle").value = e.title || "";
+      $("embUrl").value = e.url || "";
+      $("embDesc").value = e.description || "";
+      $("embColor").value = e.color || "#2563eb";
+      $("embImg").value = e.img || "";
+      $("embThumb").value = e.thumb || "";
+      $("embAuthor").value = e.author || "";
+      $("embAuthorIcon").value = e.authorIcon || "";
+      $("embFooter").value = e.footer || "";
+      $("embFooterIcon").value = e.footerIcon || "";
+      $("embTimestamp").checked = !!e.timestamp;
+      
+      const fields = e.fields || [];
+      [1,2,3].forEach((n, idx) => {
+        const f = fields[idx] || {};
+        $(`fld${n}Name`).value = f.name || "";
+        $(`fld${n}Value`).value = f.value || "";
+        $(`fld${n}Inline`).checked = !!f.inline;
+      });
+    }
+
+    // --- Rest of logic ---
     function attachFileInput(inputId, fileId) {
       const fileInput = $(fileId);
       if (!fileInput) return;
       fileInput.onchange = (e) => {
         if (e.target.files.length > 0) {
-          localFiles[inputId] = e.target.files[0];
-          $(inputId).value = `[Fichier local] ${e.target.files[0].name}`;
+          const file = e.target.files[0];
+          localFiles[inputId] = file;
+          $(inputId).value = `[Fichier local] ${file.name}`;
           updatePreview();
         }
       };
@@ -386,8 +588,8 @@
     attachFileInput("embAuthorIcon", "embAuthorIconFile");
     attachFileInput("embFooterIcon", "embFooterIconFile");
 
-    function resolvePreviewUrl(inputId) {
-      const val = $(inputId).value.trim();
+    function resolvePreviewUrl(inputId, manualValue) {
+      const val = manualValue || $(inputId).value.trim();
       if (localFiles[inputId] && val.startsWith("[Fichier local]")) {
         if (!localFiles[inputId].previewUrl) {
           localFiles[inputId].previewUrl = URL.createObjectURL(localFiles[inputId]);
@@ -397,12 +599,6 @@
       return val;
     }
 
-    const showStatus = (msg, ok=true) => {
-      statusEl.textContent = msg;
-      statusEl.className = "status " + (ok ? "ok" : "err");
-      statusEl.style.display = "block";
-      setTimeout(() => { if(statusEl.textContent===msg) statusEl.style.display="none"; }, 5000);
-    };
     const hexToDecimal = hex => parseInt(hex.replace("#",""), 16);
 
     function loadWebhooks() {
@@ -424,7 +620,6 @@
       }
     }
 
-    // Templates
     function loadTemplates() {
       const data = JSON.parse(localStorage.getItem(TPL_KEY) || "[]");
       const sel = $("tplSelect");
@@ -446,8 +641,7 @@
 
     function collectFields() {
       const fields = [];
-      const slots = [1,2,3];
-      slots.forEach(n => {
+      [1,2,3].forEach(n => {
         const name = $(`fld${n}Name`).value.trim();
         const value = $(`fld${n}Value`).value.trim();
         const inline = $(`fld${n}Inline`).checked;
@@ -458,24 +652,12 @@
 
     function saveTemplate() {
       const name = $("tplName").value.trim();
-      if (!name) return showStatus("Nom du template requis.", false);
+      if (!name) return spawnToast("Nom du template requis.", "err");
+      saveActiveEmbedState();
       const tpl = {
         name,
         content: $("plainText").value.trim(),
-        embed: {
-          title: $("embTitle").value.trim(),
-          url: $("embUrl").value.trim(),
-          description: $("embDesc").value.trim(),
-          color: $("embColor").value,
-          img: $( "embImg" ).value.trim().startsWith("[Fichier local]") ? "" : $("embImg").value.trim(),
-          thumb: $( "embThumb" ).value.trim().startsWith("[Fichier local]") ? "" : $("embThumb").value.trim(),
-          author: $("embAuthor").value.trim(),
-          authorIcon: $( "embAuthorIcon" ).value.trim().startsWith("[Fichier local]") ? "" : $("embAuthorIcon").value.trim(),
-          footer: $("embFooter").value.trim(),
-          footerIcon: $( "embFooterIcon" ).value.trim().startsWith("[Fichier local]") ? "" : $("embFooterIcon").value.trim(),
-          timestamp: $("embTimestamp").checked,
-          fields: collectFields()
-        }
+        embeds: embedsData.map(e => ({...e})) // Save all embeds
       };
       const list = JSON.parse(localStorage.getItem(TPL_KEY) || "[]");
       const existing = list.find(t => t.name === name);
@@ -483,201 +665,250 @@
       localStorage.setItem(TPL_KEY, JSON.stringify(list));
       loadTemplates();
       $("tplSelect").value = name;
-      showStatus("Template sauvegardé.");
+      spawnToast("Template sauvegardé.");
       $("tplName").value = "";
     }
 
     function loadTemplateIntoForm() {
       const name = $("tplSelect").value;
-      if (!name) return showStatus("Choisissez un template.", false);
+      if (!name) return spawnToast("Choisissez un template.", "err");
       const list = JSON.parse(localStorage.getItem(TPL_KEY) || "[]");
       const tpl = list.find(t => t.name === name);
       if (!tpl) return;
       $("plainText").value = tpl.content || "";
-      $("embTitle").value = tpl.embed?.title || "";
-      $("embUrl").value = tpl.embed?.url || "";
-      $("embDesc").value = tpl.embed?.description || "";
-      $("embColor").value = tpl.embed?.color || "#2563eb";
-      $("embImg").value = tpl.embed?.img || "";
-      $("embThumb").value = tpl.embed?.thumb || "";
-      $("embAuthor").value = tpl.embed?.author || "";
-      $("embAuthorIcon").value = tpl.embed?.authorIcon || "";
-      $("embFooter").value = tpl.embed?.footer || "";
-      $("embFooterIcon").value = tpl.embed?.footerIcon || "";
-      $("embTimestamp").checked = !!tpl.embed?.timestamp;
-      const fields = tpl.embed?.fields || [];
-      [1,2,3].forEach((n, idx) => {
-        const f = fields[idx] || {};
-        $(`fld${n}Name`).value = f.name || "";
-        $(`fld${n}Value`).value = f.value || "";
-        $(`fld${n}Inline`).checked = !!f.inline;
-      });
+      if (tpl.embeds) {
+        embedsData = tpl.embeds.map(e => ({...e}));
+      } else if (tpl.embed) {
+        embedsData = [{...tpl.embed}];
+      }
+      activeEmbedIndex = 0;
+      loadActiveEmbedToForm();
+      updateTabs();
       updatePreview();
-      showStatus("Template chargé.");
+      spawnToast("Template chargé.");
     }
 
     function deleteTemplate() {
       const name = $("tplSelect").value;
-      if (!name) return showStatus("Choisissez un template à supprimer.", false);
-      const list = JSON.parse(localStorage.getItem(TPL_KEY) || "[]")
-        .filter(t => t.name !== name);
+      if (!name) return spawnToast("Choisissez un template à supprimer.", "err");
+      const list = JSON.parse(localStorage.getItem(TPL_KEY) || "[]").filter(t => t.name !== name);
       localStorage.setItem(TPL_KEY, JSON.stringify(list));
       loadTemplates();
-      showStatus("Template supprimé.");
+      spawnToast("Template supprimé.");
+    }
+
+    // --- History Logic ---
+    function saveToHistory(payload) {
+      const history = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
+      const entry = {
+        id: Date.now(),
+        date: new Date().toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }),
+        payload: {
+          content: $("plainText").value.trim(),
+          embeds: embedsData.map(e => ({...e}))
+        },
+        title: (embedsData[0] && embedsData[0].title) || $("plainText").value.substring(0, 20) || "Sans titre"
+      };
+      history.unshift(entry);
+      if (history.length > 10) history.pop();
+      localStorage.setItem(HIST_KEY, JSON.stringify(history));
+      loadHistory();
+    }
+
+    function loadHistory() {
+      const history = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
+      const container = $("historyList");
+      if (!history.length) {
+        container.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px;">Aucun historique pour le moment.</div>';
+        return;
+      }
+      container.innerHTML = history.map((h, i) => `
+        <div class="history-item" onclick="loadFromHistory(${i})">
+          <div class="history-info">
+            <span class="history-title">${h.title}</span>
+            <span class="history-date">${h.date}</span>
+          </div>
+          <span class="history-badge">${h.payload.embeds.length} emb.</span>
+        </div>
+      `).join('');
+    }
+
+    function loadFromHistory(index) {
+      const history = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
+      const h = history[index];
+      if (!h) return;
+      
+      const p = h.payload;
+      $("plainText").value = p.content || "";
+      if (p.embeds) {
+        embedsData = p.embeds.map(e => ({...e}));
+      }
+      activeEmbedIndex = 0;
+      loadActiveEmbedToForm();
+      updateTabs();
+      updatePreview();
+      spawnToast("Message historique chargé.");
     }
 
     function updatePreview() {
+      saveActiveEmbedState();
       const content = $("plainText").value.trim();
-      const title = $("embTitle").value.trim();
-      const url = $("embUrl").value.trim();
-      const desc = $("embDesc").value.trim();
-      const color = $("embColor").value || "#2563eb";
-      const img = resolvePreviewUrl("embImg");
-      const thumb = resolvePreviewUrl("embThumb");
-      const footer = $("embFooter").value.trim();
-      const footerIcon = resolvePreviewUrl("embFooterIcon");
-      const author = $("embAuthor").value.trim();
-      const authorIcon = resolvePreviewUrl("embAuthorIcon");
-      const timestamp = $("embTimestamp").checked;
-      const fields = collectFields();
-
       $("prevContent").textContent = content || "Aucun message texte.";
+      
+      const previewContainer = $("embedsPreview");
+      previewContainer.innerHTML = "";
 
-      const embedBlock = $("prevEmbed");
-      if (title || desc || img || thumb || footer || author || fields.length) {
-        embedBlock.style.display = "block";
-        embedBlock.style.borderLeftColor = color;
-        $("prevTitle").textContent = title || "(Pas de titre)";
-        $("prevTitle").style.textDecoration = url ? "underline" : "none";
-        $("prevTitle").style.cursor = url ? "pointer" : "default";
-        $("prevTitle").onclick = url ? () => window.open(url, "_blank") : null;
-        
-        // Rendu Markdown pour la description
-        if (desc) {
-          $("prevDesc").innerHTML = marked.parse(desc);
-        } else {
-          $("prevDesc").textContent = "";
-        }
-        
-        // Mise à jour des compteurs
-        const tl = $("titleLimit");
-        tl.textContent = `${title.length} / 256`;
-        tl.className = "char-limit" + (title.length > 256 ? " danger" : title.length > 240 ? " warning" : "");
-        
-        const dl = $("descLimit");
-        dl.textContent = `${desc.length} / 4096`;
-        dl.className = "char-limit" + (desc.length > 4096 ? " danger" : desc.length > 3800 ? " warning" : "");
-        
-        const imgEl = $("prevImg");
-        if (img) { imgEl.src = img; imgEl.style.display = "block"; } else { imgEl.removeAttribute("src"); imgEl.style.display = "none"; }
-        
-        const thumbEl = $("prevThumb");
-        if (thumb) { thumbEl.src = thumb; thumbEl.style.display = "block"; } else { thumbEl.removeAttribute("src"); thumbEl.style.display = "none"; }
-        
-        const authorEl = $("prevAuthor");
+      embedsData.forEach((embed, i) => {
+        const { title, url, description, color, img, thumb, footer, footerIcon, author, authorIcon, timestamp, fields } = embed;
+        if (!title && !description && !img && !thumb && !footer && !author && !fields.length) return;
+
+        const embedEl = document.createElement("div");
+        embedEl.className = "preview-embed";
+        embedEl.style.display = "block";
+        embedEl.style.borderLeftColor = color || "#2563eb";
+
+        let authorHtml = "";
         if (author || authorIcon) {
-          authorEl.style.display = "flex";
-          authorEl.innerHTML = authorIcon ? `<img src="${authorIcon}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;"> <span>${author||"Auteur"}</span>` : `<span>${author||"Auteur"}</span>`;
-        } else {
-          authorEl.style.display = "none";
+          const resAuthorIcon = (i === activeEmbedIndex) ? resolvePreviewUrl("embAuthorIcon", authorIcon) : authorIcon;
+          authorHtml = `<div style="display:flex; align-items:center; gap:10px; color:var(--text-primary); font-weight:600; font-size:14px; margin-bottom: 12px;">
+            ${resAuthorIcon ? `<img src="${resAuthorIcon}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;">` : ""}
+            <span>${author || "Auteur"}</span>
+          </div>`;
         }
-        
-        const footerEl = $("prevFooter");
+
+        const resImg = (i === activeEmbedIndex) ? resolvePreviewUrl("embImg", img) : img;
+        const resThumb = (i === activeEmbedIndex) ? resolvePreviewUrl("embThumb", thumb) : thumb;
+        const resFooterIcon = (i === activeEmbedIndex) ? resolvePreviewUrl("embFooterIcon", footerIcon) : footerIcon;
+
+        let fieldsHtml = "";
+        if (fields.length) {
+          fieldsHtml = `<div style="margin-top:16px; display: flex; flex-wrap: wrap; gap: 16px;">
+            ${fields.map(f => `<div style="min-width: ${f.inline ? "140px" : "100%"}; flex: ${f.inline ? "1" : "100%"};">
+              <div style="font-weight:600; font-size:14px; margin-bottom:2px; color:var(--text-primary);">${f.name || "\u00a0"}</div>
+              <div style="color:var(--text-primary); font-size:14px; white-space:pre-wrap;">${f.value || ""}</div>
+            </div>`).join('')}
+          </div>`;
+        }
+
         const tsText = timestamp ? `Aujourd'hui à ${new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'})}` : '';
         const ftText = footer || "";
         const dot = ftText && tsText ? " • " : "";
-        if (ftText || tsText || footerIcon) {
-          footerEl.style.display = "flex";
-          footerEl.innerHTML = footerIcon 
-            ? `<img src=\"${footerIcon}\" style=\"width:20px;height:20px;border-radius:50%;object-fit:cover;\"> <span>${ftText}${dot}${tsText}</span>` 
-            : `<span>${ftText}${dot}${tsText}</span>`;
-        } else {
-          footerEl.style.display = "none";
+        let footerHtml = "";
+        if (ftText || tsText || resFooterIcon) {
+          footerHtml = `<div class="prev-footer">
+            ${resFooterIcon ? `<img src="${resFooterIcon}" style="width:20px;height:20px;border-radius:50%;object-fit:cover;">` : ""}
+            <span>${ftText}${dot}${tsText}</span>
+          </div>`;
         }
-        
-        const fieldsWrap = $("prevFields");
-        fieldsWrap.innerHTML = "";
-        if (fields.length) {
-          fields.forEach(f => {
-            const div = document.createElement("div");
-            div.style.minWidth = f.inline ? "140px" : "100%";
-            div.style.flex = f.inline ? "1" : "100%";
-            div.innerHTML = `<div style="font-weight:600; font-size:14px; margin-bottom:2px; color:var(--text-primary);">${f.name || "(Sans titre)"}</div><div style="color:var(--text-primary); font-size:14px; white-space:pre-wrap;">${f.value || ""}</div>`;
-            fieldsWrap.appendChild(div);
-          });
-          fieldsWrap.style.display = "flex";
-        } else {
-          fieldsWrap.style.display = "none";
-        }
-      } else {
-        embedBlock.style.display = "none";
-      }
+
+        embedEl.innerHTML = `
+          ${authorHtml}
+          <div style="display: flex; gap: 16px;">
+            <div style="flex: 1; overflow: hidden;">
+              <div class="prev-title" style="text-decoration: ${url ? "underline" : "none"}; cursor: ${url ? "pointer" : "default"}">${title || "(Pas de titre)"}</div>
+              <div class="prev-desc">${description ? marked.parse(description) : ""}</div>
+              ${fieldsHtml}
+              ${resImg ? `<img src="${resImg}" class="prev-img" style="display:block;">` : ""}
+            </div>
+            ${resThumb ? `<img src="${resThumb}" class="prev-img" style="display:block; margin-top: 0; max-width:80px; max-height:80px; object-fit: contain; flex-shrink: 0; border-radius: 4px;">` : ""}
+          </div>
+          ${footerHtml}
+        `;
+        previewContainer.appendChild(embedEl);
+      });
+
+      // Update counters for ACTIVE embed
+      const cur = embedsData[activeEmbedIndex];
+      $("titleLimit").textContent = `${cur.title.length} / 256`;
+      $("titleLimit").className = "char-limit" + (cur.title.length > 256 ? " danger" : cur.title.length > 240 ? " warning" : "");
+      $("descLimit").textContent = `${cur.description.length} / 4096`;
+      $("descLimit").className = "char-limit" + (cur.description.length > 4096 ? " danger" : cur.description.length > 3800 ? " warning" : "");
     }
 
     $("sendBtn").onclick = async () => {
       const url = $("whSelect").value;
-      if (!url) return showStatus("Choisissez ou ajoutez un webhook (voir Configuration).", false);
+      if (!url) return spawnToast("Choisissez ou ajoutez un webhook.", "err");
+      saveActiveEmbedState();
 
       const content = $("plainText").value.trim();
-      const title = $("embTitle").value.trim();
-      const url_link = $("embUrl").value.trim();
-      const desc = $("embDesc").value.trim();
-      const color = hexToDecimal($("embColor").value);
-      const img = resolvePreviewUrl("embImg");
-      const thumb = resolvePreviewUrl("embThumb");
-      const author = $("embAuthor").value.trim();
-      const authorIcon = resolvePreviewUrl("embAuthorIcon");
-      const footer = $("embFooter").value.trim();
-      const footerIcon = resolvePreviewUrl("embFooterIcon");
-      const timestamp = $("embTimestamp").checked ? new Date().toISOString() : undefined;
-
       const embeds = [];
-      if (title || desc || img || footer || author || collectFields().length) {
-        const embed = { title, url: url_link, description: desc, color };
-        const fields = collectFields().map(f => ({ name: f.name || "\u00a0", value: f.value || "\u00a0", inline: !!f.inline }));
-        if (fields.length) embed.fields = fields;
-        if (author || authorIcon) embed.author = { name: author || undefined, icon_url: authorIcon || undefined };
-        if (img) embed.image = { url: img };
-        if (thumb) embed.thumbnail = { url: thumb };
-        if (footer || footerIcon) embed.footer = { text: footer || undefined, icon_url: footerIcon || undefined };
-        if (timestamp) embed.timestamp = timestamp;
-        embeds.push(embed);
-      }
+      const formData = new FormData();
+      let attachmentCount = 0;
 
-      const payload = { content: content || undefined, embeds };
-      if (!payload.embeds.length) delete payload.embeds;
-
-      try {
-        const formData = new FormData();
-        const attachments = [];
-        let hasFiles = false;
-
-        // Gérer les fichiers locaux
-        const processFile = (inputId, payloadField, subField) => {
-          if (localFiles[inputId] && $(inputId).value.startsWith("[Fichier local]")) {
-            const file = localFiles[inputId];
-            const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
-            formData.append(`file${attachments.length}`, file, safeName);
-            
-            if (payload.embeds && payload.embeds[0]) {
-              if (subField) {
-                payload.embeds[0][payloadField][subField] = `attachment://${safeName}`;
-              } else {
-                payload.embeds[0][payloadField].url = `attachment://${safeName}`;
-              }
-            }
-            attachments.push(safeName);
-            hasFiles = true;
-          }
+      embedsData.forEach((data, i) => {
+        if (!data.title && !data.description && !data.img && !data.thumb && !data.footer && !data.author && !data.fields.length) return;
+        
+        const embed = {
+          title: data.title || undefined,
+          url: data.url || undefined,
+          description: data.description || undefined,
+          color: hexToDecimal(data.color),
+          timestamp: data.timestamp ? new Date().toISOString() : undefined,
+          fields: data.fields.length ? data.fields.map(f => ({ name: f.name || "\u00a0", value: f.value || "\u00a0", inline: !!f.inline })) : undefined
         };
 
-        processFile("embImg", "image");
-        processFile("embThumb", "thumbnail");
-        processFile("embAuthorIcon", "author", "icon_url");
-        processFile("embFooterIcon", "footer", "icon_url");
+        const checkFile = (val, field, sub) => {
+          if (val && val.startsWith("[Fichier local]")) {
+            // Find which inputId this belongs to. Only active embed has localFiles in memory for now.
+            // Actually, we should store files in embedsData if we want multi-upload to work perfectly across tabs.
+            // For now, let's assume files are only for the active embed or already resolved.
+            // TODO: Improve file persistence across tabs.
+            if (i === activeEmbedIndex) {
+              // Retrieve from localFiles
+              let inputId = "";
+              if (field === "image") inputId = "embImg";
+              if (field === "thumbnail") inputId = "embThumb";
+              if (field === "author") inputId = "embAuthorIcon";
+              if (field === "footer") inputId = "embFooterIcon";
+              
+              if (localFiles[inputId]) {
+                const file = localFiles[inputId];
+                const safeName = `f${attachmentCount}_${file.name.replace(/[^a-zA-Z0-9.]/g, "_")}`;
+                formData.append(`file${attachmentCount}`, file, safeName);
+                if (sub) {
+                  if (!embed[field]) embed[field] = {};
+                  embed[field][sub] = `attachment://${safeName}`;
+                } else {
+                  embed[field] = { url: `attachment://${safeName}` };
+                }
+                attachmentCount++;
+                return true;
+              }
+            }
+          } else if (val) {
+            if (sub) {
+              if (!embed[field]) embed[field] = {};
+              embed[field][sub] = val;
+            } else {
+              embed[field] = { url: val };
+            }
+          }
+          return false;
+        };
 
+        if (data.author || data.authorIcon) { 
+          embed.author = { name: data.author || "\u00a0" }; 
+          checkFile(data.authorIcon, "author", "icon_url"); 
+        }
+        checkFile(data.img, "image");
+        checkFile(data.thumb, "thumbnail");
+        if (data.footer || data.footerIcon) { 
+          embed.footer = { text: data.footer || "\u00a0" }; 
+          checkFile(data.footerIcon, "footer", "icon_url"); 
+        }
+
+        embeds.push(embed);
+      });
+
+      if (!content && embeds.length === 0) {
+        return spawnToast("Le message est vide (ajoutez du texte ou au moins un embed).", "err");
+      }
+
+      const payload = { content: content || undefined };
+      if (embeds.length > 0) payload.embeds = embeds;
+      try {
         let res;
-        if (hasFiles) {
+        if (attachmentCount > 0) {
           formData.append('payload_json', JSON.stringify(payload));
           res = await fetch(url, { method: "POST", body: formData });
         } else {
@@ -687,35 +918,32 @@
             body: JSON.stringify(payload)
           });
         }
-        
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
-          throw new Error(errData.message || "Code " + res.status);
+          throw new Error(errData.message || `Code ${res.status}: ${JSON.stringify(errData)}`);
         }
-        showStatus("Message envoyé avec succès !");
+        spawnToast("Message envoyé avec succès !");
+        saveToHistory();
       } catch (e) {
-        showStatus("Échec de l'envoi : " + e.message, false);
+        spawnToast("Échec : " + e.message, "err");
       }
     };
 
     $("saveTpl").onclick = saveTemplate;
-    $("loadTpl").onclick = () => { loadTemplateIntoForm(); updatePreview(); };
+    $("loadTpl").onclick = loadTemplateIntoForm;
     $("delTpl").onclick = deleteTemplate;
 
-    ["plainText","embTitle","embUrl","embDesc","embColor","embImg","embThumb","embAuthor","embAuthorIcon","embFooter","embFooterIcon","fld1Name","fld1Value","fld2Name","fld2Value","fld3Name","fld3Value"].forEach(id => {
+    // Listeners for inputs
+    const inputIds = ["plainText","embTitle","embUrl","embDesc","embColor","embImg","embThumb","embAuthor","embAuthorIcon","embFooter","embFooterIcon","fld1Name","fld1Value","fld2Name","fld2Value","fld3Name","fld3Value", "embTimestamp", "fld1Inline", "fld2Inline", "fld3Inline"];
+    inputIds.forEach(id => {
       const el = $(id);
-      if (!el) return;
-      el.addEventListener("input", updatePreview);
-      el.addEventListener("change", updatePreview);
-    });
-    ["embTimestamp","fld1Inline","fld2Inline","fld3Inline"].forEach(id => {
-      const el = $(id);
-      if (!el) return;
-      el.addEventListener("change", updatePreview);
+      if (el) el.oninput = el.onchange = updatePreview;
     });
 
     loadWebhooks();
     loadTemplates();
+    loadHistory();
+    updateTabs();
     updatePreview();
   </script>
 </body>

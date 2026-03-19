@@ -561,3 +561,187 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 8px; }
   background-size: contain;
   background-repeat: no-repeat;
 }
+
+/* --- Phase 2: Tabs & Toasts --- */
+
+/* Tabs for Multi-Embed */
+.tabs-container {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  padding: 4px;
+  background: var(--panel-sub-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--panel-border);
+  width: fit-content;
+}
+.tab {
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  user-select: none;
+}
+.tab:hover {
+  background: var(--panel-bg);
+  color: var(--accent);
+}
+.tab.active {
+  background: var(--panel-bg);
+  color: var(--accent);
+  border-color: var(--panel-border);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.tab-add {
+  color: var(--accent);
+  font-weight: 700;
+}
+.tab-remove {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-size: 14px;
+  opacity: 0.5;
+  transition: all 0.2s;
+}
+.tab-remove:hover {
+  background: var(--status-err-bg);
+  color: var(--status-err-text);
+  opacity: 1;
+}
+
+/* Toasts */
+.toast-container {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 10000;
+  pointer-events: none;
+}
+.toast {
+  pointer-events: auto;
+  padding: 16px 20px;
+  border-radius: var(--radius-lg);
+  background: var(--panel-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--panel-shadow);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 280px;
+  max-width: 400px;
+  transform: translateX(120%);
+  animation: toastIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes toastIn {
+  to { transform: translateX(0); }
+}
+.toast-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.toast.ok .toast-icon { color: #10b981; }
+.toast.err .toast-icon { color: #ef4444; }
+.toast.fadeOut {
+  animation: toastOut 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes toastOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(120%); opacity: 0; }
+}
+
+/* Toolbar Mentions */
+.toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.btn-tool {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--panel-sub-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-tool:hover {
+  background: var(--panel-bg);
+  color: var(--accent);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.btn-tool svg {
+  opacity: 0.7;
+}
+
+/* History System */
+.history-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--panel-border);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: transparent;
+}
+.history-item:last-child { border-bottom: none; }
+.history-item:hover {
+  background: var(--panel-bg);
+  padding-left: 20px;
+}
+.history-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.history-title {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.history-date {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.history-badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--accent-light);
+  color: var(--accent);
+  font-weight: 700;
+}

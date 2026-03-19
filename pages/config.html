@@ -115,17 +115,29 @@
     </div>
   </div>
 
+  <div class="toast-container" id="toastContainer"></div>
+
   <script>
     const $ = id => document.getElementById(id);
-    const statusEl = $("status");
     const LS_KEY = "webhooks";
 
-    const showStatus = (msg, ok=true) => {
-      statusEl.textContent = msg;
-      statusEl.className = "status " + (ok ? "ok" : "err");
-      statusEl.style.display = "block";
-      setTimeout(() => { if(statusEl.textContent===msg) statusEl.style.display="none"; }, 5000);
-    };
+    function spawnToast(msg, type="ok") {
+      const container = $("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      
+      const icon = type === "ok" 
+        ? '<svg class="toast-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>'
+        : '<svg class="toast-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+      
+      toast.innerHTML = `${icon}<span>${msg}</span>`;
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.add("fadeOut");
+        setTimeout(() => toast.remove(), 500);
+      }, 4000);
+    }
 
     function loadWebhooks() {
       const data = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
@@ -165,18 +177,18 @@
     $("addWh").onclick = () => {
       const name = $("whName").value.trim();
       const url = $("whUrl").value.trim();
-      if (!name || !url) return showStatus("Nom et URL sont requis.", false);
+      if (!name || !url) return spawnToast("Nom et URL sont requis.", false);
       saveWebhook(name, url);
-      showStatus("Webhook enregistré.");
+      spawnToast("Webhook enregistré.");
       $("whName").value = "";
       $("whUrl").value = "";
     };
 
     $("delWh").onclick = () => {
       const url = $("whSelect").value;
-      if (!url) return showStatus("Choisissez un webhook à supprimer.", false);
+      if (!url) return spawnToast("Choisissez un webhook à supprimer.", false);
       deleteWebhook(url);
-      showStatus("Webhook supprimé.");
+      spawnToast("Webhook supprimé.");
     };
 
     $("exportBtn").onclick = () => {
@@ -193,7 +205,7 @@
       downloadAnchor.click();
       downloadAnchor.remove();
       
-      showStatus("Sauvegarde exportée avec succès !");
+      spawnToast("Sauvegarde exportée avec succès !");
     };
 
     $("importBtn").onclick = () => $("fileInput").click();
@@ -209,9 +221,9 @@
           if (data.webhooks) localStorage.setItem(LS_KEY, JSON.stringify(data.webhooks));
           if (data.te_templates) localStorage.setItem("te_templates", JSON.stringify(data.te_templates));
           loadWebhooks();
-          showStatus("Données importées avec succès !");
+          spawnToast("Données importées avec succès !");
         } catch (err) {
-          showStatus("Erreur : fichier JSON invalide ou corrompu.", false);
+          spawnToast("Erreur : fichier JSON invalide ou corrompu.", false);
         }
         $("fileInput").value = "";
       };

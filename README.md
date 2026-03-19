@@ -6,14 +6,17 @@
 
 <br />
 
-## 🌟 Fonctionnalités Principales
-
+- **🚀 Version 2.0.0 (Nouvelle !) :**
+    - **📦 Support Multi-Embeds** : Créez et gérez jusqu'à 10 blocs d'embeds par message avec une interface à onglets intuitive.
+    - **✨ Notifications Toasts Premium** : Système de feedback moderne, minimaliste et animé.
+    - **🕒 Historique Local** : Retrouvez et rechargez vos 10 derniers envois réussis en un clic.
+    - **🏷️ Assistant de Mentions** : Insérez dynamiquement des mentions @user, @role ou #salon avec icônes.
+    - **📝 Rendu Markdown Live** : Aperçu en temps réel fidèle au formatage Discord (gras, italique, liens).
 - **💡 100% Client-Side** : Aucune donnée ne transite par un serveur tiers. La sauvegarde se fait dans le navigateur local (`localStorage`), assurant une confidentialité totale.
-- **🎨 Design Premium (Glassmorphism)** : Interface utilisateur moderne et dynamique gérée en CSS natif. Accompagnée d'effets visuels attrayants et de micro-animations interactives.
-- **🌗 Support Multi-Thèmes** : Mode Clair (Light) et Mode Sombre (Dark) entièrement fluides, avec ajustement intelligent du logo T4SYSTEMS.
-- **🛠️ Configurations centralisées** : Gestion claire des URLs de Webhooks sans configuration préalable nécessaire.
-- **📦 Chargement de Fichiers Locaux** : Support natif et intuitif pour intégrer directement des images locales dans vos embeds Discord via l'API `multipart/form-data`.
-- **💾 Import / Export JSON** : Sauvegardez et restaurez vos brouillons, templates d'embeds et configurations de Webhooks via un simple fichier de configuration en un clic.
+- **🎨 Design Premium (Glassmorphism)** : Interface utilisateur moderne et dynamique gérée en CSS natif.
+- **🛠️ Configurations centralisées** : Gestion claire des URLs de Webhooks.
+- **📦 Chargement de Fichiers Locaux** : Envoyez des images locales directement via l'API.
+- **💾 Import / Export JSON** : Sauvegardez tout votre état de travail.
 
 ---
 
