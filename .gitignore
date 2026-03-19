@@ -6,4 +6,5 @@ Thumbs.db
 assets/patch*.js
 *.log
 export/
-assets/images/bank/
+assets/images/bank/*
+!assets/images/bank/.gitkeep
