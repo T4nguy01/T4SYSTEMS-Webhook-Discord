@@ -1,0 +1,33 @@
+{
+  "webhooks": [
+    {
+      "name": "Matériel",
+      "url": "https://discord.com/api/webhooks/1483860333180358748/WxLzuL4ABmpT51gaPoA4S4oqFOJfFhZTRrUSCcl12lqNfR27rLFdZBxSdvU8Yz6pTgx_"
+    },
+    {
+      "name": "Github",
+      "url": "https://discord.com/api/webhooks/1481233239204167803/fywimBstrikrTJ3pHd5YOz_ixna-KC8u6pBzCMPqMGmaSms-AQPxezKvN1JGz5S9Cr3x"
+    },
+    {
+      "name": "Index - Script",
+      "url": "https://discord.com/api/webhooks/1483854512950214826/GleN2-Zq2sJQxnccVIAYS5xARxEASNV9TkFA2yD58UknsCFqML8kndB-Wp8Pe6RwcscO"
+    },
+    {
+      "name": "Annonces",
+      "url": "https://discord.com/api/webhooks/1475854462244360316/mN2FJjqPyyjsImeVYqFt81f1D7lSuFOxMhszR5qQVdwm0UKh5mx1fZiOMRC8BzZMApe8"
+    }
+  ],
+  "te_templates": [
+    {
+      "name": "Nouveau Matériel",
+      "content": "",
+      "embed": {
+        "title": "Nouvelle Achat",
+        "description": "Voici le lien de ma tablette Honor : https://ln4.fr/ln469a9a788ad60b",
+        "color": "#06fe30",
+        "img": "",
+        "footer": ""
+      }
+    }
+  ]
+}

@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>T4SYSTEMS - Messages Webhooks</title>
+  <link rel="stylesheet" href="../assets/styles/shared.css">
+  <style>
+    /* Specific styles for message.html */
+    .section-title {
+      font-family: var(--font-head);
+      font-size: 18px;
+      color: var(--text-primary);
+      margin: 0 0 16px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .section-title svg {
+      color: var(--accent);
+    }
+    
+    .panel-divider {
+      border: 0;
+      border-top: 1px solid var(--panel-border);
+      margin: 24px 0;
+    }
+    
+    /* Advanced Options Accordions */
+    .adv-options {
+      background: var(--panel-sub-bg);
+      border: 1px solid var(--field-border);
+      border-radius: var(--radius-md);
+      margin-top: 16px;
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+    .adv-options[open] {
+      border-color: var(--accent);
+    }
+    .adv-options summary {
+      padding: 18px 20px;
+      font-family: var(--font-head);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      user-select: none;
+      color: var(--text-primary);
+    }
+    .adv-options summary::-webkit-details-marker { display: none; }
+    .adv-options summary::after {
+      content: "+";
+      color: var(--text-secondary);
+      font-size: 20px;
+    }
+    .adv-options[open] summary::after {
+      content: "−";
+    }
+    .details-content {
+      padding: 0 20px 20px 20px;
+      animation: fadeIn 0.3s ease;
+    }
+  </style>
+  <script>
+    (function() {
+      const theme = localStorage.getItem('te_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+      document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('themeToggle');
+        if (!btn) return;
+        const setLabel = (t) => {
+          btn.innerHTML = t === 'light' 
+            ? '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg> Mode sombre' 
+            : '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg> Mode clair';
+        };
+        setLabel(theme);
+        btn.onclick = () => {
+          const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+          const next = current === 'light' ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', next);
+          document.body.setAttribute('data-theme', next);
+          localStorage.setItem('te_theme', next);
+          setLabel(next);
+        };
+      });
+    })();
+  </script>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="badge"><div class="site-logo"></div></div>
+      <div>
+        <h1>Messages et Embeds</h1>
+        <p class="sub">Utilisez un webhook enregistré pour publier sur le serveur T4SYSTEMS.</p>
+      </div>
+      <button class="theme-toggle" id="themeToggle">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg> Mode sombre
+      </button>
+    </header>
+
+    <div class="grid" style="gap:24px;">
+      <div class="top-actions stagger-1">
+        <a href="../index.html">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Accueil
+        </a>
+        <a href="config.html">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"></path></svg>
+          Configuration
+        </a>
+      </div>
+
+      <div class="card stagger-2" style="padding: 0; background: transparent; border: none; box-shadow: none;">
+        
+        <!-- Header : Webhook & Template Selection -->
+        <div style="background: var(--panel-sub-bg); padding: 24px; border-radius: var(--radius-xl); border: 1px solid var(--panel-border); display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px; box-shadow: var(--panel-shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+          <div style="flex: 1; min-width: 250px;">
+            <label style="margin-bottom:12px; display:inline-flex; align-items:center; gap:8px;">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--accent);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> 
+              Webhook de destination
+            </label>
+            <select id="whSelect" style="margin: 0; padding: 14px 16px; border-radius: var(--radius-md); box-shadow: 0 4px 12px rgba(0,0,0,0.05);"></select>
+            <div style="color: var(--text-muted); font-size:13px; margin-top:8px;">À configurer dans l'onglet Configuration.</div>
+          </div>
+          <div style="flex: 1; min-width: 250px;">
+            <label style="margin-bottom:12px; display:inline-flex; align-items:center; gap:8px;">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--text-secondary);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg> 
+              Charger un Template sauvegardé
+            </label>
+            <div style="display: flex; gap: 12px;">
+              <select id="tplSelect" style="margin: 0; padding: 14px 16px; border-radius: var(--radius-md); box-shadow: 0 4px 12px rgba(0,0,0,0.05);"></select>
+              <button class="btn-secondary" id="loadTpl" style="white-space:nowrap; padding: 14px 24px; border-radius: var(--radius-md);">Charger</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-2" style="align-items: start; gap: 32px; margin-top: 32px;">
+          
+          <!-- Colonne Gauche : Éditeur Principal -->
+          <div style="min-width: 0; display: flex; flex-direction: column; gap: 32px;">
+            
+            <!-- Message Simple -->
+            <div style="background: var(--panel-bg); padding: 24px; border-radius: var(--radius-xl); border: 1px solid var(--panel-border); box-shadow: var(--panel-shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+              <h3 class="section-title" style="margin-bottom: 24px;">
+                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                Message Simple
+              </h3>
+              <textarea id="plainText" placeholder="Écrivez le message classique qui s'affichera au-dessus de l'embed... (Optionnel)" style="min-height: 100px; font-size: 15px; padding: 16px; border-color: transparent; box-shadow: 0 2px 8px rgba(0,0,0,0.04);"></textarea>
+            </div>
+
+            <!-- Contenu de l'Embed -->
+            <div style="background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: var(--radius-xl); padding: 24px; box-shadow: var(--panel-shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+              <h3 class="section-title" style="margin-bottom: 24px;">
+                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+                Contenu de l'Embed
+              </h3>
+              
+              <div class="grid" style="gap:24px;">
+                <!-- Champs Principaux -->
+                <div class="grid grid-2">
+                  <div>
+                    <label>Titre de l'annonce</label>
+                    <input id="embTitle" placeholder="Ex: Grosse mise à jour disponible !">
+                  </div>
+                  <div>
+                    <label>Couleur du liseré gauche</label>
+                    <input id="embColor" type="color" value="#2563eb" style="height: 52px; padding: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                  </div>
+                </div>
+                <div>
+                  <label>Lien cliquable sur le Titre (URL)</label>
+                  <input id="embUrl" placeholder="https://...">
+                </div>
+                <div>
+                  <label>Description du message</label>
+                  <textarea id="embDesc" placeholder="Contenu textuel principal de l'embed... (Mise en forme Markdown valide)" style="min-height: 140px; border-color: transparent; box-shadow: 0 2px 8px rgba(0,0,0,0.04);"></textarea>
+                </div>
+
+                <!-- Sections Avancées Collapsées -->
+                <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+                  <details class="adv-options">
+                    <summary>Images & Miniature</summary>
+                    <div class="details-content grid grid-2" style="margin-top:16px;">
+                      <div><label>Grande Image (URL)</label><input id="embImg" placeholder="https://exemple.com/image.png"></div>
+                      <div><label>Petite Miniature (URL)</label><input id="embThumb" placeholder="https://exemple.com/logo.png"></div>
+                    </div>
+                  </details>
+
+                  <details class="adv-options">
+                    <summary>Auteur & Pied de page</summary>
+                    <div class="details-content grid" style="gap:24px; margin-top:16px;">
+                      <div class="grid grid-2">
+                        <div><label>Nom de l'Auteur</label><input id="embAuthor" placeholder="Ton Pseudo"></div>
+                        <div><label>Icône Auteur (URL)</label><input id="embAuthorIcon" placeholder="https://..."></div>
+                      </div>
+                      <div class="grid grid-2">
+                        <div><label>Texte du Pied de page</label><input id="embFooter" placeholder="Message de fin"></div>
+                        <div><label>Icône Pied de page (URL)</label><input id="embFooterIcon" placeholder="https://..."></div>
+                      </div>
+                      <div style="display:flex; align-items:center; gap:12px; margin-top:8px;">
+                        <input type="checkbox" id="embTimestamp" style="width: 24px; height: 24px; border-radius: 6px;">
+                        <label for="embTimestamp" style="margin:0; font-size: 15px; cursor: pointer;">Afficher automatiquement l'heure d'envoi</label>
+                      </div>
+                    </div>
+                  </details>
+
+                  <details class="adv-options">
+                    <summary>Champs / Catégories Personnalisées</summary>
+                    <div class="details-content grid" style="margin-top:16px; gap: 32px;">
+                      <!-- Champ 1 -->
+                      <div class="grid grid-3" style="align-items: center; border-left: 4px solid var(--accent); padding-left: 16px; border-radius: 4px;">
+                        <div><label>Titre 1</label><input id="fld1Name" placeholder="Catégorie"></div>
+                        <div><label>Valeur 1</label><input id="fld1Value" placeholder="Annonce, News..."></div>
+                        <div style="margin-top: 24px; display: flex; align-items: center; gap: 12px;">
+                          <input type="checkbox" id="fld1Inline" style="width: 20px; height: 20px;"> <label for="fld1Inline" style="margin:0; cursor:pointer;">Côte à côte</label>
+                        </div>
+                      </div>
+                      <!-- Champ 2 -->
+                      <div class="grid grid-3" style="align-items: center; border-left: 4px solid var(--accent); padding-left: 16px; border-radius: 4px;">
+                        <div><label>Titre 2</label><input id="fld2Name" placeholder="Priorité"></div>
+                        <div><label>Valeur 2</label><input id="fld2Value" placeholder="Haute"></div>
+                        <div style="margin-top: 24px; display: flex; align-items: center; gap: 12px;">
+                          <input type="checkbox" id="fld2Inline" style="width: 20px; height: 20px;"> <label for="fld2Inline" style="margin:0; cursor:pointer;">Côte à côte</label>
+                        </div>
+                      </div>
+                      <!-- Champ 3 -->
+                      <div class="grid grid-3" style="align-items: center; border-left: 4px solid var(--accent); padding-left: 16px; border-radius: 4px;">
+                        <div><label>Titre 3</label><input id="fld3Name" placeholder="Niveau"></div>
+                        <div><label>Valeur 3</label><input id="fld3Value" placeholder="Débutant"></div>
+                        <div style="margin-top: 24px; display: flex; align-items: center; gap: 12px;">
+                          <input type="checkbox" id="fld3Inline" style="width: 20px; height: 20px;"> <label for="fld3Inline" style="margin:0; cursor:pointer;">Côte à côte</label>
+                        </div>
+                      </div>
+                    </div>
+                  </details>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Colonne Droite : Preview & Actions -->
+          <div style="position: sticky; top: 32px; display: flex; flex-direction: column; gap: 24px; min-width: 0;">
+            
+            <!-- Bloc d'Aperçu visuel -->
+            <div class="preview-box">
+              <div class="pill" style="margin-bottom: 20px; background: var(--accent); color: white;">Aperçu Visuel</div>
+              <div class="preview-content" id="prevContent">Aucun message texte.</div>
+              
+              <div class="preview-embed" id="prevEmbed">
+                <div id="prevAuthor" style="display:none; align-items:center; gap:10px; color:var(--text-primary); font-weight:600; font-size:14px; margin-bottom: 12px;"></div>
+                <div style="display: flex; gap: 16px;">
+                  <div style="flex: 1; overflow: hidden;">
+                    <div class="prev-title" id="prevTitle"></div>
+                    <div class="prev-desc" id="prevDesc"></div>
+                    <div id="prevFields" style="margin-top:16px; display: flex; flex-wrap: wrap; gap: 16px;"></div>
+                    <img id="prevImg" class="prev-img" alt="aperçu de l'image">
+                  </div>
+                  <img id="prevThumb" class="prev-img" style="margin-top: 0; max-width:80px; max-height:80px; object-fit: contain; flex-shrink: 0; border-radius: 4px;" alt="aperçu du thumbnail">
+                </div>
+                <div class="prev-footer" id="prevFooter"></div>
+              </div>
+            </div>
+            
+            <!-- Bouton Principal d'Envoi -->
+            <button id="sendBtn" style="padding: 18px 24px; font-size: 18px; width: 100%; box-shadow: 0 12px 30px var(--accent-glow);">
+              <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              Envoyer sur Discord
+            </button>
+
+            <!-- Status Alert Container -->
+            <div id="status" class="status"></div>
+
+            <!-- Paramètres de Sauvegarde de Template -->
+            <div style="background: var(--panel-bg); padding: 24px; border-radius: var(--radius-xl); border: 1px solid var(--panel-border); box-shadow: var(--panel-shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+              <h4 style="margin:0 0 16px 0; font-family: var(--font-head); font-size: 16px; color: var(--text-primary); display:flex; align-items:center; gap:8px;">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                Sauvegarder ce brouillon en modèle
+              </h4>
+              <div style="display: flex; gap: 12px;">
+                <input id="tplName" placeholder="Nom de ce modèle..." style="flex: 1;">
+                <button class="btn-secondary" id="saveTpl" style="padding: 12px 20px;">Sauver</button>
+              </div>
+              <div style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--field-border); text-align: center;">
+                <button id="delTpl" style="background: transparent; border: none; color: var(--status-err-text); font-size: 14px; font-weight: 600; cursor: pointer; padding: 8px; border-radius: 8px;">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align: middle; margin-right: 6px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                  Supprimer le template actif
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const statusEl = $("status");
+    const LS_KEY = "webhooks";
+    const TPL_KEY = "te_templates";
+
+    const localFiles = {};
+    function attachFileInput(inputId, fileId) {
+      const fileInput = $(fileId);
+      if (!fileInput) return;
+      fileInput.onchange = (e) => {
+        if (e.target.files.length > 0) {
+          localFiles[inputId] = e.target.files[0];
+          $(inputId).value = `[Fichier local] ${e.target.files[0].name}`;
+          updatePreview();
+        }
+      };
+      $(inputId).addEventListener("input", (e) => {
+        if (localFiles[inputId] && !e.target.value.startsWith("[Fichier local]")) {
+          if (localFiles[inputId].previewUrl) URL.revokeObjectURL(localFiles[inputId].previewUrl);
+          delete localFiles[inputId];
+          fileInput.value = "";
+          updatePreview();
+        }
+      });
+    }
+    
+    attachFileInput("embImg", "embImgFile");
+    attachFileInput("embThumb", "embThumbFile");
+    attachFileInput("embAuthorIcon", "embAuthorIconFile");
+    attachFileInput("embFooterIcon", "embFooterIconFile");
+
+    function resolvePreviewUrl(inputId) {
+      const val = $(inputId).value.trim();
+      if (localFiles[inputId] && val.startsWith("[Fichier local]")) {
+        if (!localFiles[inputId].previewUrl) {
+          localFiles[inputId].previewUrl = URL.createObjectURL(localFiles[inputId]);
+        }
+        return localFiles[inputId].previewUrl;
+      }
+      return val;
+    }
+
+    const showStatus = (msg, ok=true) => {
+      statusEl.textContent = msg;
+      statusEl.className = "status " + (ok ? "ok" : "err");
+      statusEl.style.display = "block";
+      setTimeout(() => { if(statusEl.textContent===msg) statusEl.style.display="none"; }, 5000);
+    };
+    const hexToDecimal = hex => parseInt(hex.replace("#",""), 16);
+
+    function loadWebhooks() {
+      const data = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
+      const sel = $("whSelect");
+      sel.innerHTML = "";
+      if (!data.length) {
+        const opt = document.createElement("option");
+        opt.text = "Aucun webhook (configurer d'abord)";
+        opt.value = "";
+        sel.add(opt);
+      } else {
+        data.forEach(({name,url}) => {
+          const opt = document.createElement("option");
+          opt.text = name;
+          opt.value = url;
+          sel.add(opt);
+        });
+      }
+    }
+
+    // Templates
+    function loadTemplates() {
+      const data = JSON.parse(localStorage.getItem(TPL_KEY) || "[]");
+      const sel = $("tplSelect");
+      sel.innerHTML = "";
+      if (!data.length) {
+        const opt = document.createElement("option");
+        opt.text = "Aucun template";
+        opt.value = "";
+        sel.add(opt);
+      } else {
+        data.forEach(t => {
+          const opt = document.createElement("option");
+          opt.text = t.name;
+          opt.value = t.name;
+          sel.add(opt);
+        });
+      }
+    }
+
+    function collectFields() {
+      const fields = [];
+      const slots = [1,2,3];
+      slots.forEach(n => {
+        const name = $(`fld${n}Name`).value.trim();
+        const value = $(`fld${n}Value`).value.trim();
+        const inline = $(`fld${n}Inline`).checked;
+        if (name || value) fields.push({ name, value, inline });
+      });
+      return fields;
+    }
+
+    function saveTemplate() {
+      const name = $("tplName").value.trim();
+      if (!name) return showStatus("Nom du template requis.", false);
+      const tpl = {
+        name,
+        content: $("plainText").value.trim(),
+        embed: {
+          title: $("embTitle").value.trim(),
+          url: $("embUrl").value.trim(),
+          description: $("embDesc").value.trim(),
+          color: $("embColor").value,
+          img: $( "embImg" ).value.trim().startsWith("[Fichier local]") ? "" : $("embImg").value.trim(),
+          thumb: $( "embThumb" ).value.trim().startsWith("[Fichier local]") ? "" : $("embThumb").value.trim(),
+          author: $("embAuthor").value.trim(),
+          authorIcon: $( "embAuthorIcon" ).value.trim().startsWith("[Fichier local]") ? "" : $("embAuthorIcon").value.trim(),
+          footer: $("embFooter").value.trim(),
+          footerIcon: $( "embFooterIcon" ).value.trim().startsWith("[Fichier local]") ? "" : $("embFooterIcon").value.trim(),
+          timestamp: $("embTimestamp").checked,
+          fields: collectFields()
+        }
+      };
+      const list = JSON.parse(localStorage.getItem(TPL_KEY) || "[]");
+      const existing = list.find(t => t.name === name);
+      if (existing) Object.assign(existing, tpl); else list.push(tpl);
+      localStorage.setItem(TPL_KEY, JSON.stringify(list));
+      loadTemplates();
+      $("tplSelect").value = name;
+      showStatus("Template sauvegardé.");
+      $("tplName").value = "";
+    }
+
+    function loadTemplateIntoForm() {
+      const name = $("tplSelect").value;
+      if (!name) return showStatus("Choisissez un template.", false);
+      const list = JSON.parse(localStorage.getItem(TPL_KEY) || "[]");
+      const tpl = list.find(t => t.name === name);
+      if (!tpl) return;
+      $("plainText").value = tpl.content || "";
+      $("embTitle").value = tpl.embed?.title || "";
+      $("embUrl").value = tpl.embed?.url || "";
+      $("embDesc").value = tpl.embed?.description || "";
+      $("embColor").value = tpl.embed?.color || "#2563eb";
+      $("embImg").value = tpl.embed?.img || "";
+      $("embThumb").value = tpl.embed?.thumb || "";
+      $("embAuthor").value = tpl.embed?.author || "";
+      $("embAuthorIcon").value = tpl.embed?.authorIcon || "";
+      $("embFooter").value = tpl.embed?.footer || "";
+      $("embFooterIcon").value = tpl.embed?.footerIcon || "";
+      $("embTimestamp").checked = !!tpl.embed?.timestamp;
+      const fields = tpl.embed?.fields || [];
+      [1,2,3].forEach((n, idx) => {
+        const f = fields[idx] || {};
+        $(`fld${n}Name`).value = f.name || "";
+        $(`fld${n}Value`).value = f.value || "";
+        $(`fld${n}Inline`).checked = !!f.inline;
+      });
+      updatePreview();
+      showStatus("Template chargé.");
+    }
+
+    function deleteTemplate() {
+      const name = $("tplSelect").value;
+      if (!name) return showStatus("Choisissez un template à supprimer.", false);
+      const list = JSON.parse(localStorage.getItem(TPL_KEY) || "[]")
+        .filter(t => t.name !== name);
+      localStorage.setItem(TPL_KEY, JSON.stringify(list));
+      loadTemplates();
+      showStatus("Template supprimé.");
+    }
+
+    function updatePreview() {
+      const content = $("plainText").value.trim();
+      const title = $("embTitle").value.trim();
+      const url = $("embUrl").value.trim();
+      const desc = $("embDesc").value.trim();
+      const color = $("embColor").value || "#2563eb";
+      const img = resolvePreviewUrl("embImg");
+      const thumb = resolvePreviewUrl("embThumb");
+      const footer = $("embFooter").value.trim();
+      const footerIcon = resolvePreviewUrl("embFooterIcon");
+      const author = $("embAuthor").value.trim();
+      const authorIcon = resolvePreviewUrl("embAuthorIcon");
+      const timestamp = $("embTimestamp").checked;
+      const fields = collectFields();
+
+      $("prevContent").textContent = content || "Aucun message texte.";
+
+      const embedBlock = $("prevEmbed");
+      if (title || desc || img || thumb || footer || author || fields.length) {
+        embedBlock.style.display = "block";
+        embedBlock.style.borderLeftColor = color;
+        $("prevTitle").textContent = title || "(Pas de titre)";
+        $("prevTitle").style.textDecoration = url ? "underline" : "none";
+        $("prevTitle").style.cursor = url ? "pointer" : "default";
+        $("prevTitle").onclick = url ? () => window.open(url, "_blank") : null;
+        $("prevDesc").textContent = desc || "";
+        
+        const imgEl = $("prevImg");
+        if (img) { imgEl.src = img; imgEl.style.display = "block"; } else { imgEl.removeAttribute("src"); imgEl.style.display = "none"; }
+        
+        const thumbEl = $("prevThumb");
+        if (thumb) { thumbEl.src = thumb; thumbEl.style.display = "block"; } else { thumbEl.removeAttribute("src"); thumbEl.style.display = "none"; }
+        
+        const authorEl = $("prevAuthor");
+        if (author || authorIcon) {
+          authorEl.style.display = "flex";
+          authorEl.innerHTML = authorIcon ? `<img src="${authorIcon}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;"> <span>${author||"Auteur"}</span>` : `<span>${author||"Auteur"}</span>`;
+        } else {
+          authorEl.style.display = "none";
+        }
+        
+        const footerEl = $("prevFooter");
+        const tsText = timestamp ? `Aujourd'hui à ${new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'})}` : '';
+        const ftText = footer || "";
+        const dot = ftText && tsText ? " • " : "";
+        if (ftText || tsText || footerIcon) {
+          footerEl.style.display = "flex";
+          footerEl.innerHTML = footerIcon 
+            ? `<img src=\"${footerIcon}\" style=\"width:20px;height:20px;border-radius:50%;object-fit:cover;\"> <span>${ftText}${dot}${tsText}</span>` 
+            : `<span>${ftText}${dot}${tsText}</span>`;
+        } else {
+          footerEl.style.display = "none";
+        }
+        
+        const fieldsWrap = $("prevFields");
+        fieldsWrap.innerHTML = "";
+        if (fields.length) {
+          fields.forEach(f => {
+            const div = document.createElement("div");
+            div.style.minWidth = f.inline ? "140px" : "100%";
+            div.style.flex = f.inline ? "1" : "100%";
+            div.innerHTML = `<div style="font-weight:600; font-size:14px; margin-bottom:2px; color:var(--text-primary);">${f.name || "(Sans titre)"}</div><div style="color:var(--text-primary); font-size:14px; white-space:pre-wrap;">${f.value || ""}</div>`;
+            fieldsWrap.appendChild(div);
+          });
+          fieldsWrap.style.display = "flex";
+        } else {
+          fieldsWrap.style.display = "none";
+        }
+      } else {
+        embedBlock.style.display = "none";
+      }
+    }
+
+    $("sendBtn").onclick = async () => {
+      const url = $("whSelect").value;
+      if (!url) return showStatus("Choisissez ou ajoutez un webhook (voir Configuration).", false);
+
+      const content = $("plainText").value.trim();
+      const title = $("embTitle").value.trim();
+      const url_link = $("embUrl").value.trim();
+      const desc = $("embDesc").value.trim();
+      const color = hexToDecimal($("embColor").value);
+      const img = resolvePreviewUrl("embImg");
+      const thumb = resolvePreviewUrl("embThumb");
+      const author = $("embAuthor").value.trim();
+      const authorIcon = resolvePreviewUrl("embAuthorIcon");
+      const footer = $("embFooter").value.trim();
+      const footerIcon = resolvePreviewUrl("embFooterIcon");
+      const timestamp = $("embTimestamp").checked ? new Date().toISOString() : undefined;
+
+      const embeds = [];
+      if (title || desc || dImg || footer || author || collectFields().length) {
+        const embed = { title, url: url_link, description: desc, color };
+        const fields = collectFields().map(f => ({ name: f.name || "\u00a0", value: f.value || "\u00a0", inline: !!f.inline }));
+        if (fields.length) embed.fields = fields;
+        if (author || authorIcon) embed.author = { name: author || undefined, icon_url: dAuthorIcon || undefined };
+        if (img) embed.image = { url: dImg };
+        if (thumb) embed.thumbnail = { url: dThumb };
+        if (footer || footerIcon) embed.footer = { text: footer || undefined, icon_url: dFooterIcon || undefined };
+        if (timestamp) embed.timestamp = timestamp;
+        embeds.push(embed);
+      }
+
+      const payload = { content: content || undefined, embeds };
+      if (!payload.embeds.length) delete payload.embeds;
+
+      try {
+        let res;
+        if (filesToUpload.length > 0) {
+          const formData = new FormData();
+          formData.append('payload_json', JSON.stringify(payload));
+          filesToUpload.forEach((item, i) => {
+            formData.append(`files[${i}]`, item.file, item.filename);
+          });
+          res = await fetch(url, { method: "POST", body: formData });
+        } else {
+          res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+        }
+        if (!res.ok) throw new Error("Code " + res.status);
+        showStatus("Message envoyé avec succès !");
+      } catch (e) {
+        showStatus("Échec de l'envoi : " + e.message, false);
+      }
+    };
+
+    $("saveTpl").onclick = saveTemplate;
+    $("loadTpl").onclick = () => { loadTemplateIntoForm(); updatePreview(); };
+    $("delTpl").onclick = deleteTemplate;
+
+    ["plainText","embTitle","embUrl","embDesc","embColor","embImg","embThumb","embAuthor","embAuthorIcon","embFooter","embFooterIcon","fld1Name","fld1Value","fld2Name","fld2Value","fld3Name","fld3Value"].forEach(id => {
+      const el = $(id);
+      if (!el) return;
+      el.addEventListener("input", updatePreview);
+      el.addEventListener("change", updatePreview);
+    });
+    ["embTimestamp","fld1Inline","fld2Inline","fld3Inline"].forEach(id => {
+      const el = $(id);
+      if (!el) return;
+      el.addEventListener("change", updatePreview);
+    });
+
+    loadWebhooks();
+    loadTemplates();
+    updatePreview();
+  </script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>T4SYSTEMS — Configuration Webhooks</title>
+  <link rel="stylesheet" href="../assets/styles/shared.css">
+  <script>
+    (function() {
+      const theme = localStorage.getItem('te_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+      document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('themeToggle');
+        if (!btn) return;
+        const setLabel = (t) => {
+          btn.innerHTML = t === 'light' 
+            ? '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg> Mode sombre' 
+            : '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg> Mode clair';
+        };
+        setLabel(theme);
+        btn.onclick = () => {
+          const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+          const next = current === 'light' ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', next);
+          document.body.setAttribute('data-theme', next);
+          localStorage.setItem('te_theme', next);
+          setLabel(next);
+        };
+      });
+    })();
+  </script>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="badge"><div class="site-logo"></div></div>
+      <div>
+        <h1>Configuration des webhooks</h1>
+        <p class="sub">Ajoutez, renommez ou supprimez les webhooks utilisés par T4SYSTEMS.</p>
+      </div>
+      <button class="theme-toggle" id="themeToggle">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg> Mode sombre
+      </button>
+    </header>
+
+    <div class="grid" style="gap:24px;">
+      <div class="top-actions stagger-1">
+        <a href="../index.html">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Accueil
+        </a>
+        <a href="message.html">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
+          Aller aux messages
+        </a>
+      </div>
+
+      <div class="card stagger-2">
+        <div class="grid grid-2">
+          <div>
+            <label>Nom du webhook</label>
+            <input id="whName" placeholder="Ex: Salon annonces">
+          </div>
+          <div>
+            <label>URL du webhook</label>
+            <input id="whUrl" placeholder="https://discord.com/api/webhooks/...">
+          </div>
+        </div>
+        <div class="row" style="margin-top:8px;">
+          <button id="addWh">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Ajouter / Mettre à jour
+          </button>
+        </div>
+        
+        <hr style="border:0; border-top:1px solid var(--panel-border); margin: 16px 0;">
+        
+        <div class="grid grid-2" style="align-items: end;">
+          <div>
+            <label>Webhooks enregistrés</label>
+            <select id="whSelect"></select>
+            <div style="color: var(--text-muted); font-size: 13px; margin-top:6px;">Stockés uniquement dans votre navigateur (localStorage).</div>
+          </div>
+          <div class="row">
+            <button class="btn-secondary" id="delWh">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+              Supprimer sélection
+            </button>
+          </div>
+        </div>
+        
+        <div id="status" class="status"></div>
+      </div>
+      
+      <div class="card stagger-3">
+        <h3 style="margin: 0 0 16px 0; font-family: var(--font-head); font-size: 18px; display: flex; align-items: center; gap: 8px;">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color: var(--accent);"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          Sauvegardes et Restaurations
+        </h3>
+        <p style="color: var(--text-secondary); margin-top: -8px; margin-bottom: 16px; font-size: 14px;">
+          Exportez tout vers un fichier sur votre disque pour sauvegarder l'état actuel, ou importez une sauvegarde existante.
+        </p>
+        <div class="grid grid-2">
+          <button class="button" id="exportBtn">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Exporter en JSON
+          </button>
+          
+          <button class="btn-secondary" id="importBtn" style="display:flex; justify-content:center; align-items:center; cursor:pointer;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            Importer un JSON
+          </button>
+          <input type="file" id="fileInput" accept=".json" style="display:none;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const statusEl = $("status");
+    const LS_KEY = "webhooks";
+
+    const showStatus = (msg, ok=true) => {
+      statusEl.textContent = msg;
+      statusEl.className = "status " + (ok ? "ok" : "err");
+      statusEl.style.display = "block";
+      setTimeout(() => { if(statusEl.textContent===msg) statusEl.style.display="none"; }, 5000);
+    };
+
+    function loadWebhooks() {
+      const data = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
+      const sel = $("whSelect");
+      sel.innerHTML = "";
+      if (!data.length) {
+        const opt = document.createElement("option");
+        opt.text = "Aucun webhook enregistré";
+        opt.value = "";
+        sel.add(opt);
+      } else {
+        data.forEach(({name,url}) => {
+          const opt = document.createElement("option");
+          opt.text = name;
+          opt.value = url;
+          sel.add(opt);
+        });
+      }
+    }
+
+    function saveWebhook(name, url) {
+      const list = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
+      const existing = list.find(w => w.name === name);
+      if (existing) existing.url = url; else list.push({name,url});
+      localStorage.setItem(LS_KEY, JSON.stringify(list));
+      loadWebhooks();
+      $("whSelect").value = url;
+    }
+
+    function deleteWebhook(url) {
+      const list = JSON.parse(localStorage.getItem(LS_KEY) || "[]")
+        .filter(w => w.url !== url);
+      localStorage.setItem(LS_KEY, JSON.stringify(list));
+      loadWebhooks();
+    }
+
+    $("addWh").onclick = () => {
+      const name = $("whName").value.trim();
+      const url = $("whUrl").value.trim();
+      if (!name || !url) return showStatus("Nom et URL sont requis.", false);
+      saveWebhook(name, url);
+      showStatus("Webhook enregistré.");
+      $("whName").value = "";
+      $("whUrl").value = "";
+    };
+
+    $("delWh").onclick = () => {
+      const url = $("whSelect").value;
+      if (!url) return showStatus("Choisissez un webhook à supprimer.", false);
+      deleteWebhook(url);
+      showStatus("Webhook supprimé.");
+    };
+
+    $("exportBtn").onclick = () => {
+      const state = {
+        webhooks: JSON.parse(localStorage.getItem(LS_KEY) || "[]"),
+        te_templates: JSON.parse(localStorage.getItem("te_templates") || "[]")
+      };
+      
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+      const downloadAnchor = document.createElement("a");
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `t4systems-backup.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      
+      showStatus("Sauvegarde exportée avec succès !");
+    };
+
+    $("importBtn").onclick = () => $("fileInput").click();
+
+    $("fileInput").onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const data = JSON.parse(event.target.result);
+          if (data.webhooks) localStorage.setItem(LS_KEY, JSON.stringify(data.webhooks));
+          if (data.te_templates) localStorage.setItem("te_templates", JSON.stringify(data.te_templates));
+          loadWebhooks();
+          showStatus("Données importées avec succès !");
+        } catch (err) {
+          showStatus("Erreur : fichier JSON invalide ou corrompu.", false);
+        }
+        $("fileInput").value = "";
+      };
+      reader.readAsText(file);
+    };
+
+    loadWebhooks();
+  </script>
+</body>
+</html>
