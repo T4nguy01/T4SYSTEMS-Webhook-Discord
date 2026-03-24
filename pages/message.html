@@ -359,33 +359,14 @@
                     </div>
                   </details>
 
-                  <details class="adv-options">
+                  <details class="adv-options" open>
                     <summary>Champs / Catégories Personnalisées</summary>
-                    <div class="details-content grid" style="margin-top:16px; gap: 32px;">
-                      <!-- Champ 1 -->
-                      <div class="grid grid-3" style="align-items: center; border-left: 4px solid var(--accent); padding-left: 16px; border-radius: 4px;">
-                        <div><label>Titre 1</label><input id="fld1Name" placeholder="Catégorie"></div>
-                        <div><label>Valeur 1</label><textarea id="fld1Value" placeholder="Annonce, News..." style="min-height: 60px;"></textarea></div>
-                        <div style="margin-top: 24px; display: flex; align-items: center; gap: 12px;">
-                          <input type="checkbox" id="fld1Inline" style="width: 20px; height: 20px;"> <label for="fld1Inline" style="margin:0; cursor:pointer;">Côte à côte</label>
-                        </div>
-                      </div>
-                      <!-- Champ 2 -->
-                      <div class="grid grid-3" style="align-items: center; border-left: 4px solid var(--accent); padding-left: 16px; border-radius: 4px;">
-                        <div><label>Titre 2</label><input id="fld2Name" placeholder="Priorité"></div>
-                        <div><label>Valeur 2</label><textarea id="fld2Value" placeholder="Haute" style="min-height: 60px;"></textarea></div>
-                        <div style="margin-top: 24px; display: flex; align-items: center; gap: 12px;">
-                          <input type="checkbox" id="fld2Inline" style="width: 20px; height: 20px;"> <label for="fld2Inline" style="margin:0; cursor:pointer;">Côte à côte</label>
-                        </div>
-                      </div>
-                      <!-- Champ 3 -->
-                      <div class="grid grid-3" style="align-items: center; border-left: 4px solid var(--accent); padding-left: 16px; border-radius: 4px;">
-                        <div><label>Titre 3</label><input id="fld3Name" placeholder="Niveau"></div>
-                        <div><label>Valeur 3</label><textarea id="fld3Value" placeholder="Débutant" style="min-height: 60px;"></textarea></div>
-                        <div style="margin-top: 24px; display: flex; align-items: center; gap: 12px;">
-                          <input type="checkbox" id="fld3Inline" style="width: 20px; height: 20px;"> <label for="fld3Inline" style="margin:0; cursor:pointer;">Côte à côte</label>
-                        </div>
-                      </div>
+                    <div class="details-content" style="margin-top:12px; display:flex; flex-direction:column; gap:12px;">
+                      <div id="fieldsContainer" style="display:flex; flex-direction:column; gap:12px;"></div>
+                      <button type="button" class="btn-secondary" style="align-self:flex-start; padding:10px 14px;" onclick="addFieldRow()">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Ajouter un champ
+                      </button>
                     </div>
                   </details>
                 </div>
@@ -579,6 +560,61 @@
       .map(s => s.trim())
       .filter(Boolean);
 
+    // --- Dynamic Fields (Embed) ---
+    function createFieldRow(field = {}, index = 0) {
+      const row = document.createElement("div");
+      row.className = "field-row";
+      row.style.display = "grid";
+      row.style.gridTemplateColumns = "1fr 1fr auto";
+      row.style.gap = "12px";
+      row.style.alignItems = "center";
+      row.style.borderLeft = "4px solid var(--accent)";
+      row.style.padding = "12px 12px 12px 16px";
+      row.style.borderRadius = "8px";
+      row.style.background = "var(--panel-sub-bg)";
+
+      row.innerHTML = `
+        <div>
+          <label>Nom</label>
+          <input class="field-name" placeholder="Catégorie" value="${field.name || ""}">
+        </div>
+        <div>
+          <label>Valeur</label>
+          <textarea class="field-value" placeholder="Valeur..." style="min-height: 60px;">${field.value || ""}</textarea>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; align-items:flex-start; justify-content:center;">
+          <label style="display:flex; gap:8px; align-items:center; cursor:pointer;">
+            <input class="field-inline" type="checkbox" ${field.inline ? "checked" : ""} style="width:18px; height:18px;"> Ligne
+          </label>
+          <button type="button" class="btn-secondary field-remove" style="padding:6px 10px;">Supprimer</button>
+        </div>
+      `;
+      row.querySelector(".field-remove").onclick = () => {
+        row.remove();
+        updatePreview();
+      };
+      ["field-name","field-value","field-inline"].forEach(cls => {
+        const el = row.querySelector(`.${cls}`);
+        if (el) el.oninput = el.onchange = updatePreview;
+      });
+      return row;
+    }
+
+    function renderFieldRows(fields = []) {
+      const container = $("fieldsContainer");
+      if (!container) return;
+      container.innerHTML = "";
+      if (!fields.length) fields = [{ name: "", value: "", inline: false }];
+      fields.forEach((f, idx) => container.appendChild(createFieldRow(f, idx)));
+    }
+
+    function addFieldRow() {
+      const container = $("fieldsContainer");
+      if (!container) return;
+      container.appendChild(createFieldRow({}, container.children.length));
+      updatePreview();
+    }
+
     // --- Multi-Embed Logic ---
     function updateTabs() {
       const container = $("embedTabs");
@@ -663,14 +699,7 @@
       $("embFooter").value = e.footer || "";
       $("embFooterIcon").value = e.footerIcon || "";
       $("embTimestamp").checked = !!e.timestamp;
-      
-      const fields = e.fields || [];
-      [1,2,3].forEach((n, idx) => {
-        const f = fields[idx] || {};
-        $(`fld${n}Name`).value = f.name || "";
-        $(`fld${n}Value`).value = f.value || "";
-        $(`fld${n}Inline`).checked = !!f.inline;
-      });
+      renderFieldRows(e.fields || []);
     }
 
     // --- Rest of logic ---
@@ -752,14 +781,13 @@
     }
 
     function collectFields() {
-      const fields = [];
-      [1,2,3].forEach(n => {
-        const name = $(`fld${n}Name`).value.trim();
-        const value = $(`fld${n}Value`).value.trim();
-        const inline = $(`fld${n}Inline`).checked;
-        if (name || value) fields.push({ name, value, inline });
-      });
-      return fields;
+      const rows = Array.from(document.querySelectorAll(".field-row"));
+      return rows.map(row => {
+        const name = row.querySelector(".field-name")?.value.trim() || "";
+        const value = row.querySelector(".field-value")?.value.trim() || "";
+        const inline = row.querySelector(".field-inline")?.checked || false;
+        return { name, value, inline };
+      }).filter(f => f.name || f.value);
     }
 
     function saveTemplate() {
