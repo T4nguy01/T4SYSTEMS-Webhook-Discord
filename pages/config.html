@@ -120,13 +120,15 @@
   <script>
     const $ = id => document.getElementById(id);
     const LS_KEY = "webhooks";
+    const WEBHOOK_RE = /^https?:\/\/(?:ptb\.|canary\.)?discord\.com\/api\/webhooks\/\d+\/[A-Za-z0-9_-]+$/;
 
     function spawnToast(msg, type="ok") {
+      const variant = type === "err" ? "err" : "ok";
       const container = $("toastContainer");
       const toast = document.createElement("div");
-      toast.className = `toast ${type}`;
+      toast.className = `toast ${variant}`;
       
-      const icon = type === "ok" 
+      const icon = variant === "ok" 
         ? '<svg class="toast-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>'
         : '<svg class="toast-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
       
@@ -158,6 +160,10 @@
       }
     }
 
+    function validateWebhook(url) {
+      return WEBHOOK_RE.test(url);
+    }
+
     function saveWebhook(name, url) {
       const list = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
       const existing = list.find(w => w.name === name);
@@ -177,7 +183,8 @@
     $("addWh").onclick = () => {
       const name = $("whName").value.trim();
       const url = $("whUrl").value.trim();
-      if (!name || !url) return spawnToast("Nom et URL sont requis.", false);
+      if (!name || !url) return spawnToast("Nom et URL sont requis.", "err");
+      if (!validateWebhook(url)) return spawnToast("URL du webhook invalide.", "err");
       saveWebhook(name, url);
       spawnToast("Webhook enregistré.");
       $("whName").value = "";
@@ -186,7 +193,7 @@
 
     $("delWh").onclick = () => {
       const url = $("whSelect").value;
-      if (!url) return spawnToast("Choisissez un webhook à supprimer.", false);
+      if (!url) return spawnToast("Choisissez un webhook à supprimer.", "err");
       deleteWebhook(url);
       spawnToast("Webhook supprimé.");
     };

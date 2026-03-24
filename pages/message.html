@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <title>T4SYSTEMS - Messages Webhooks</title>
   <link rel="stylesheet" href="../assets/styles/shared.css">
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@16.2.1/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.3.3/dist/purify.min.js"></script>
   <style>
     /* Specific styles for message.html */
     .section-title {
@@ -410,6 +411,14 @@
     const LS_KEY = "webhooks";
     const TPL_KEY = "te_templates";
     const HIST_KEY = "te_history";
+    const WEBHOOK_RE = /^https?:\/\/(?:ptb\.|canary\.)?discord\.com\/api\/webhooks\/\d+\/[A-Za-z0-9_-]+$/;
+
+    const escapeHtml = (str = "") => str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
 
     // --- State Management ---
     let embedsData = [{ title: "", url: "", description: "", color: "#2563eb", img: "", thumb: "", author: "", authorIcon: "", footer: "", footerIcon: "", timestamp: false, fields: [] }];
@@ -465,6 +474,24 @@
       activeTx.focus();
       activeTx.selectionStart = activeTx.selectionEnd = start + snippet.length;
       updatePreview();
+    }
+
+    function validateWebhook(url) {
+      return WEBHOOK_RE.test(url);
+    }
+
+    function checkLimits(content, embedsArr) {
+      if (content.length > 2000) return "Le message texte dépasse 2000 caractères (limite Discord).";
+      for (const [idx, e] of embedsArr.entries()) {
+        if (e.title && e.title.length > 256) return `Embed ${idx + 1}: le titre dépasse 256 caractères.`;
+        if (e.description && e.description.length > 4096) return `Embed ${idx + 1}: la description dépasse 4096 caractères.`;
+        if (e.fields && e.fields.length > 25) return `Embed ${idx + 1}: maximum 25 champs.`;
+        for (const [fIdx, f] of (e.fields || []).entries()) {
+          if (f.name && f.name.length > 256) return `Embed ${idx + 1}, champ ${fIdx + 1}: titre > 256 caractères.`;
+          if (f.value && f.value.length > 1024) return `Embed ${idx + 1}, champ ${fIdx + 1}: valeur > 1024 caractères.`;
+        }
+      }
+      return "";
     }
 
     // --- Multi-Embed Logic ---
@@ -770,9 +797,10 @@
         let authorHtml = "";
         if (author || authorIcon) {
           const resAuthorIcon = (i === activeEmbedIndex) ? resolvePreviewUrl("embAuthorIcon", authorIcon) : authorIcon;
+          const safeAuthor = escapeHtml(author || "Auteur");
           authorHtml = `<div style="display:flex; align-items:center; gap:10px; color:var(--text-primary); font-weight:600; font-size:14px; margin-bottom: 12px;">
             ${resAuthorIcon ? `<img src="${resAuthorIcon}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;">` : ""}
-            <span>${author || "Auteur"}</span>
+            <span>${safeAuthor}</span>
           </div>`;
         }
 
@@ -784,8 +812,8 @@
         if (fields.length) {
           fieldsHtml = `<div style="margin-top:16px; display: flex; flex-wrap: wrap; gap: 16px;">
             ${fields.map(f => `<div style="min-width: ${f.inline ? "140px" : "100%"}; flex: ${f.inline ? "1" : "100%"};">
-              <div style="font-weight:600; font-size:14px; margin-bottom:2px; color:var(--text-primary);">${f.name || "\u00a0"}</div>
-              <div style="color:var(--text-primary); font-size:14px; white-space:pre-wrap;">${f.value || ""}</div>
+              <div style="font-weight:600; font-size:14px; margin-bottom:2px; color:var(--text-primary);">${escapeHtml(f.name || "\u00a0")}</div>
+              <div style="color:var(--text-primary); font-size:14px; white-space:pre-wrap;">${escapeHtml(f.value || "")}</div>
             </div>`).join('')}
           </div>`;
         }
@@ -797,16 +825,19 @@
         if (ftText || tsText || resFooterIcon) {
           footerHtml = `<div class="prev-footer">
             ${resFooterIcon ? `<img src="${resFooterIcon}" style="width:20px;height:20px;border-radius:50%;object-fit:cover;">` : ""}
-            <span>${ftText}${dot}${tsText}</span>
+            <span>${escapeHtml(ftText)}${dot}${escapeHtml(tsText)}</span>
           </div>`;
         }
+
+        const safeTitle = escapeHtml(title || "(Pas de titre)");
+        const safeDesc = description ? DOMPurify.sanitize(marked.parse(description)) : "";
 
         embedEl.innerHTML = `
           ${authorHtml}
           <div style="display: flex; gap: 16px;">
             <div style="flex: 1; overflow: hidden;">
-              <div class="prev-title" style="text-decoration: ${url ? "underline" : "none"}; cursor: ${url ? "pointer" : "default"}">${title || "(Pas de titre)"}</div>
-              <div class="prev-desc">${description ? marked.parse(description) : ""}</div>
+              <div class="prev-title" style="text-decoration: ${url ? "underline" : "none"}; cursor: ${url ? "pointer" : "default"}">${safeTitle}</div>
+              <div class="prev-desc">${safeDesc}</div>
               ${fieldsHtml}
               ${resImg ? `<img src="${resImg}" class="prev-img" style="display:block;">` : ""}
             </div>
@@ -828,9 +859,13 @@
     $("sendBtn").onclick = async () => {
       const url = $("whSelect").value;
       if (!url) return spawnToast("Choisissez ou ajoutez un webhook.", "err");
+      if (!validateWebhook(url)) return spawnToast("URL du webhook invalide.", "err");
       saveActiveEmbedState();
 
       const content = $("plainText").value.trim();
+      const limitError = checkLimits(content, embedsData);
+      if (limitError) return spawnToast(limitError, "err");
+
       const embeds = [];
       const formData = new FormData();
       let attachmentCount = 0;
