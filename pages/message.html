@@ -420,6 +420,17 @@
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#39;");
 
+    const mdToHtml = (txt = "") => {
+      if (!txt) return "";
+      try {
+        if (window.marked && window.DOMPurify) {
+          return DOMPurify.sanitize(marked.parse(txt));
+        }
+        if (window.marked) return marked.parse(txt);
+      } catch (_) { /* fallback below */ }
+      return escapeHtml(txt).replace(/\n/g, "<br>");
+    };
+
     // --- State Management ---
     let embedsData = [{ title: "", url: "", description: "", color: "#2563eb", img: "", thumb: "", author: "", authorIcon: "", footer: "", footerIcon: "", timestamp: false, fields: [] }];
     let activeEmbedIndex = 0;
@@ -830,7 +841,7 @@
         }
 
         const safeTitle = escapeHtml(title || "(Pas de titre)");
-        const safeDesc = description ? DOMPurify.sanitize(marked.parse(description)) : "";
+        const safeDesc = mdToHtml(description);
 
         embedEl.innerHTML = `
           ${authorHtml}
