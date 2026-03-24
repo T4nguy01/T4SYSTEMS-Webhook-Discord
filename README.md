@@ -1,67 +1,50 @@
-<div align="center">
-  <img src="assets/images/logo-dark.png" alt="T4SYSTEMS Logo" height="80">
-  <h1>T4SYSTEMS — Webhook Sender</h1>
-  <p>Une application web complète, premium et sans backend pour créer, gérer et envoyer des Webhooks Discord riches en toute sécurité.</p>
-</div>
+# T4SYSTEMS — Webhook Sender
 
-<br />
+Application web 100 % front-end pour créer, prévisualiser et envoyer des webhooks Discord riches (embeds, fichiers, mentions, threads) sans backend ni données stockées ailleurs que dans votre navigateur.
 
-- **🚀 Version 2.0.0 (Nouvelle !) :**
-    - **📦 Support Multi-Embeds** : Créez et gérez jusqu'à 10 blocs d'embeds par message avec une interface à onglets intuitive.
-    - **✨ Notifications Toasts Premium** : Système de feedback moderne, minimaliste et animé.
-    - **🕒 Historique Local** : Retrouvez et rechargez vos 10 derniers envois réussis en un clic.
-    - **🏷️ Assistant de Mentions** : Insérez dynamiquement des mentions @user, @role ou #salon avec icônes.
-    - **📝 Rendu Markdown Live** : Aperçu en temps réel fidèle au formatage Discord (gras, italique, liens).
-- **💡 100% Client-Side** : Aucune donnée ne transite par un serveur tiers. La sauvegarde se fait dans le navigateur local (`localStorage`), assurant une confidentialité totale.
-- **🎨 Design Premium (Glassmorphism)** : Interface utilisateur moderne et dynamique gérée en CSS natif.
-- **🛠️ Configurations centralisées** : Gestion claire des URLs de Webhooks.
-- **📦 Chargement de Fichiers Locaux** : Envoyez des images locales directement via l'API.
-- **💾 Import / Export JSON** : Sauvegardez tout votre état de travail.
+## Points forts
+- Multi-embeds (jusqu’à 10) avec onglets + champs personnalisés dynamiques (jusqu’à 25 champs, inline au choix).
+- Aperçu temps réel : Markdown rendu par Marked 16.2.1, nettoyé par DOMPurify 3.3.3 pour éviter le XSS.
+- Options complètes du webhook : override username/avatar, TTS, suppression d’aperçus, allowed_mentions fines (users/roles IDs, everyone/here), envoi dans un thread (thread_id).
+- Pièces jointes multiples (fichiers) et images locales référencées dans les embeds.
+- Historique local (10 derniers envois), templates sauvegardés, import/export JSON complet.
+- Mode clair/sombre, design modernisé (Space Grotesk, fonds animés, glass + néomorphism léger).
+- 100 % client-side : tout est dans `localStorage`, aucun serveur tiers.
 
----
+## Démarrage rapide
+1) Clone ou zip :  
+```bash
+git clone https://github.com/votre_profil/t4systems-webhook.git
+```
+2) Ouvre le dossier `T4SYSTEMS-Webhook-Discord`.
+3) Double-clique `index.html` dans un navigateur récent (Chrome, Firefox, Edge, Safari).
 
-## 🚀 Installation & Utilisation
+## Workflow conseillé
+1. Page **Configuration** (`pages/config.html`) : ajoute tes webhooks (URL validées), exporte/importe un JSON si besoin.  
+2. Page **Messages & Embeds** (`pages/message.html`) :
+   - Choisis un webhook, éventuellement un thread ID.
+   - Renseigne username/avatar/TTS/flags, allowed_mentions (IDs ou parse).
+   - Édite le message texte + un ou plusieurs embeds (titre, URL, description, images, footer, author, champs dynamiques, timestamp).
+   - Ajoute des pièces jointes si nécessaire, puis envoie.
+   - Sauvegarde comme template ou recharge un historique récent.
 
-Puisque le logiciel est statique et tourne uniquement dans votre navigateur Web, aucune installation compliquée n'est demandée !
+## Fichiers clés
+- `index.html` : hub d’accueil.
+- `pages/config.html` : gestion des webhooks, import/export.
+- `pages/message.html` : éditeur complet (embeds, options avancées, fichiers, mentions).
+- `assets/styles/shared.css` : thème clair/sombre, layout, animations.
+- `assets/images/` : logos.
 
-1. **Clonez le dépôt** sur votre machine locale ou téléchargez-le en '.zip' :
-   ```bash
-   git clone https://github.com/votre_profil/t4systems-webhook.git
-   ```
-2. **Ouvrez le dossier** `T4SYSTEMS - Webhook Discord`.
-3. Lancez simplement le fichier **`index.html`** dans un navigateur récent (Chrome, Firefox, Safari, Edge).
+## Sécurité & limites Discord
+- Les URLs de webhook donnent le droit de poster : garde-les privées, ne publie pas le site en ligne avec des webhooks hardcodés.
+- Limites Discord respectées : 2000 chars (content), 4096 (description), 256 (titre), 25 champs par embed, 1024 par valeur de champ.
+- Aperçu sécurisé : Marked épinglé en 16.2.1 + DOMPurify 3.3.3 pour filtrer le HTML issu du markdown.
 
-### 📖 Flux d'Utilisation Recommandé :
-- Naviguez d'abord vers la page **"Configuration"**.
-- Ajoutez l'URL de votre Webhook Discord générée dans les paramètres de votre serveur.
-- Naviguez ensuite vers l'onglet **"Messages & Embeds"** pour composer un aperçu visuel de l'annonce, l'enregistrer comme template, ou l'émettre directement vers votre serveur Discord.
+## Personnalisation rapide
+- Couleurs/typo : variables CSS dans `assets/styles/shared.css` (`:root` et `html[data-theme="dark"]`).
+- Logos : remplace `assets/images/logo-dark.png` / `logo-light.png`.
+- Comportement embeds : le JS est centralisé dans `pages/message.html` (fonctions `updatePreview`, `sendBtn`).
 
----
-
-## 📦 Architecture du projet
-
-Le projet est basé sur du code vanilla pur pour éviter l'encombrement des frameworks JavaScript lourds.
-
-- `index.html` : Point d'entrée de l'application et du menu principal.
-- `pages/config.html` : L'interface de configuration, de sauvegarde et de restauration JSON.
-- `pages/message.html` : L'éditeur complet de création d'embeds contenant des sections avancées.
-- `assets/styles/shared.css` : Contient toute l'esthétique premium de "Glassmorphism" et la gestion des thèmes.
-- `assets/images/` : Contient le logo-light et logo-dark affichés sur le Header.
-
----
-
-## 🎨 Personnalisation (UI / Thèmes)
-
-L'UI a été conçue pour être modifiable simplement :
-- Vous pouvez définir vos couleurs custom dans `assets/styles/shared.css` en accédant aux variables CSS (`:root` et `html[data-theme="dark"]`).
-- Pour remplacer le formatage des Embed, vous pouvez éditer le constructeur JSON dans `message.html` (ligne `async () => { ... }`).
-
-### Remplacement de ロゴ (Logo)
-Placez un nouveau fichier SVG ou PNG dans `assets/images/` qui prendra pour nom `logo-dark.png` ou `logo-light.png` si vous souhaitez le modifier.
-
----
-
-## ⚠️ Sécurité
-
-**Vos Webhooks offrent un accès administratif pour envoyer des messages sur votre serveur Discord.**  
-Ne partagez pas vos fichiers de sauvegarde JSON (`t4systems-backup.json`) avec d'autres personnes et veillez à ne jamais rendre ce projet hébergé et public sur un service d'hôte de page qui listerait vos webhooks dans l'explorateur du navigateur.
+## Historique des versions (récent)
+- 2.0.x : multi-embeds, toasts, historique local.
+- 2.1.x : options avancées webhook (mentions fines, TTS, flags, thread_id), pièces jointes multiples, champs custom dynamiques, aperçus sécurisés avec libs épinglées, refonte visuelle.
