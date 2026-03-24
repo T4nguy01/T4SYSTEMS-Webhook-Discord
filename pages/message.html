@@ -138,6 +138,12 @@
             </label>
             <select id="whSelect" style="margin: 0; padding: 14px 16px; border-radius: var(--radius-md); box-shadow: 0 4px 12px rgba(0,0,0,0.05);"></select>
             <div style="color: var(--text-muted); font-size:13px; margin-top:8px;">À configurer dans l'onglet Configuration.</div>
+            <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
+              <div style="flex:1; min-width:180px;">
+                <label>Thread ID (optionnel)</label>
+                <input id="threadId" placeholder="ID de fil de discussion">
+              </div>
+            </div>
           </div>
           <div style="flex: 1; min-width: 250px;">
             <label style="margin-bottom:12px; display:inline-flex; align-items:center; gap:8px;">
@@ -179,6 +185,56 @@
                 <button class="btn-tool" onclick="insertMention('here')">@here</button>
               </div>
               <textarea id="plainText" placeholder="Écrivez le message classique qui s'affichera au-dessus de l'embed... (Optionnel)" style="min-height: 100px; font-size: 15px; padding: 16px; border-color: transparent; box-shadow: 0 2px 8px rgba(0,0,0,0.04);"></textarea>
+            </div>
+
+            <!-- Options d'envoi -->
+            <div style="background: var(--panel-bg); padding: 24px; border-radius: var(--radius-xl); border: 1px solid var(--panel-border); box-shadow: var(--panel-shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+              <h3 class="section-title" style="margin-bottom: 18px;">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 6V4m0 16v-2m8-6h2M2 12h2m13.657-6.343l1.414-1.414M4.929 19.071l1.414-1.414m0-11.314L4.93 4.93m14.142 14.142-1.414-1.414"></path></svg>
+                Options du message Discord
+              </h3>
+              <div class="grid grid-2" style="gap:16px;">
+                <div>
+                  <label>Nom d'affichage (username)</label>
+                  <input id="optUsername" placeholder="Override du nom du webhook">
+                </div>
+                <div>
+                  <label>Avatar (URL)</label>
+                  <input id="optAvatar" placeholder="https://...png">
+                </div>
+              </div>
+              <div class="grid grid-2" style="gap:16px; margin-top:12px; align-items:center;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <input type="checkbox" id="optTts" style="width:20px; height:20px;">
+                  <label for="optTts" style="margin:0; cursor:pointer;">Activer TTS</label>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <input type="checkbox" id="optSuppress" style="width:20px; height:20px;">
+                  <label for="optSuppress" style="margin:0; cursor:pointer;">Masquer l'aperçu des liens (flags)</label>
+                </div>
+              </div>
+              <hr class="panel-divider">
+              <div class="grid grid-2" style="gap:16px;">
+                <div>
+                  <label>Mentions utilisateurs (IDs séparés par des virgules)</label>
+                  <input id="optUserIds" placeholder="123,456">
+                </div>
+                <div>
+                  <label>Mentions rôles (IDs séparés par des virgules)</label>
+                  <input id="optRoleIds" placeholder="789,101112">
+                </div>
+              </div>
+              <div style="display:flex; gap:12px; margin-top:12px; flex-wrap:wrap;">
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                  <input type="checkbox" id="optAllowEveryone" style="width:18px; height:18px;"> Autoriser @everyone/@here
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                  <input type="checkbox" id="optAllowUsers" style="width:18px; height:18px;" checked> Autoriser mentions utilisateurs
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                  <input type="checkbox" id="optAllowRoles" style="width:18px; height:18px;" checked> Autoriser mentions rôles
+                </label>
+              </div>
             </div>
 
             <!-- Contenu de l'Embed -->
@@ -368,6 +424,19 @@
               Envoyer sur Discord
             </button>
 
+            <!-- Pièces jointes -->
+            <div style="background: var(--panel-bg); padding: 20px; border-radius: var(--radius-xl); border: 1px solid var(--panel-border); box-shadow: var(--panel-shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+              <h4 style="margin:0 0 12px 0; font-family: var(--font-head); font-size: 15px; color: var(--text-primary); display:flex; align-items:center; gap:8px;">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a5 5 0 01-7.07-7.07l9.2-9.2a3 3 0 114.24 4.24l-9.2 9.2a1 1 0 01-1.41-1.41l8.49-8.49"></path></svg>
+                Pièces jointes (fichiers)
+              </h4>
+              <div style="display:flex; gap:12px; align-items:center;">
+                <button class="btn-secondary" id="pickFiles" style="padding:10px 14px;">Choisir des fichiers</button>
+                <span id="attachLabel" style="font-size:13px; color:var(--text-muted);">Aucun fichier sélectionné.</span>
+              </div>
+              <input type="file" id="attachFiles" multiple style="display:none;">
+            </div>
+
 
             <!-- Paramètres de Sauvegarde de Template -->
             <div style="background: var(--panel-bg); padding: 24px; border-radius: var(--radius-xl); border: 1px solid var(--panel-border); box-shadow: var(--panel-shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
@@ -504,6 +573,11 @@
       }
       return "";
     }
+
+    const parseIds = (txt) => (txt || "")
+      .split(/[,\n;]/)
+      .map(s => s.trim())
+      .filter(Boolean);
 
     // --- Multi-Embed Logic ---
     function updateTabs() {
@@ -952,13 +1026,55 @@
 
       const payload = { content: content || undefined };
       if (embeds.length > 0) payload.embeds = embeds;
+
+      // Username / avatar / TTS / flags
+      const username = $("optUsername").value.trim();
+      const avatar_url = $("optAvatar").value.trim();
+      if (username) payload.username = username;
+      if (avatar_url) payload.avatar_url = avatar_url;
+      payload.tts = $("optTts").checked || false;
+      if ($("optSuppress").checked) payload.flags = 4; // SUPPRESS_EMBEDS
+
+      // Allowed mentions
+      const allowEveryone = $("optAllowEveryone").checked;
+      const allowUsers = $("optAllowUsers").checked;
+      const allowRoles = $("optAllowRoles").checked;
+      const userIds = parseIds($("optUserIds").value);
+      const roleIds = parseIds($("optRoleIds").value);
+      const allowed_mentions = { parse: [] };
+      if (allowEveryone) allowed_mentions.parse.push("everyone");
+      if (userIds.length) allowed_mentions.users = userIds; else if (allowUsers) allowed_mentions.parse.push("users");
+      if (roleIds.length) allowed_mentions.roles = roleIds; else if (allowRoles) allowed_mentions.parse.push("roles");
+      payload.allowed_mentions = allowed_mentions;
+
+      // Attachments (généraux)
+      const attachInput = $("attachFiles");
+      let generalAttachments = [];
+      if (attachInput && attachInput.files && attachInput.files.length) {
+        Array.from(attachInput.files).forEach((file, idx) => {
+          const id = attachmentCount + idx;
+          generalAttachments.push({ id, filename: file.name });
+          formData.append(`file${id}`, file, file.name.replace(/[^a-zA-Z0-9._-]/g, "_"));
+        });
+        attachmentCount += attachInput.files.length;
+      }
+      if (generalAttachments.length) payload.attachments = (payload.attachments || []).concat(generalAttachments);
+
+      // Thread id
+      let sendUrl = url;
+      const threadId = $("threadId").value.trim();
+      if (threadId) {
+        const sep = sendUrl.includes("?") ? "&" : "?";
+        sendUrl = `${sendUrl}${sep}thread_id=${encodeURIComponent(threadId)}`;
+      }
+
       try {
         let res;
         if (attachmentCount > 0) {
           formData.append('payload_json', JSON.stringify(payload));
-          res = await fetch(url, { method: "POST", body: formData });
+          res = await fetch(sendUrl, { method: "POST", body: formData });
         } else {
-          res = await fetch(url, {
+          res = await fetch(sendUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
