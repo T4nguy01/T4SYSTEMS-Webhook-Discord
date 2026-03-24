@@ -510,18 +510,20 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 8px; }
 
 .preview-embed {
   margin-top: 8px;
-  padding: 14px 16px 16px 16px;
+  padding: 16px 18px 18px 18px;
   border-left: 4px solid var(--accent);
-  background: #2b2d31; /* Discord embed bg */
-  border-radius: 4px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(0,0,0,0.08));
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
   display: none;
-  max-width: 520px;
+  max-width: 560px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.35);
 }
 
 .prev-title {
-  font-weight: 600;
+  font-weight: 700;
   font-size: 16px;
-  color: #00a8fc;
+  color: #8ddcff;
   margin-top: 4px;
   margin-bottom: 2px;
 }
@@ -531,7 +533,7 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 8px; }
 }
 
 .prev-desc {
-  color: #dbdee1;
+  color: #e6e8ee;
   font-size: 14px;
   white-space: pre-wrap;
   line-height: 1.375;
